@@ -94,7 +94,12 @@ hardware
   critical path: path through CL that is worst case
   steps to design a processor:
     analyze instruction set -> datapath requirements
-      general steps of data path: instruction fetch (IF) -> decode / register read -> execute -> memory -> register write
+      general steps of data path
+        IF: instruction fetch
+        ID: instruction decode, read registers
+        EX: execution. mem-ref calculate address / arith-log perform operation
+        Mem: read data from memory / write data to memory
+        WB: write data back to register
     select set of datapath components & establish clock methodology
       components: combinational elements, state elements + clocking methodology, building blocks
       storage element
@@ -107,8 +112,49 @@ hardware
       formulate logic equations & design circuits
   register transfer language
     example: (ADDU) R[rd] <- R[rs] + R[rt]; PC <- PC + 4
-  pipelining
-    does not help latency of single task, but throughput of entire workload
-    multiple tasks operating simultaneously using different resources
-    potential speedup = number of pipeline stages
-    time to fill pipeline and time to drain it reduces speedup
+  instruction level parallelism (ILP)
+    pipelining
+      does not help latency of single task, but throughput of entire workload
+      multiple tasks operating simultaneously using different resources
+      potential speedup = number of pipeline stages
+      time to fill pipeline and time to drain it reduces speedup
+      speedup limited by slowest pipeline stage
+    RISC design principles
+      fixed instruction length
+      simplified addressing modes
+      fewer and simpler instructions
+      simplified memory access
+      let the compiler do it
+    pipelined datapath
+      add registers between stages to hold information produced in previous cycle
+    hazards: situations that prevent starting the next logical instruction in the next clock cycle
+      structural hazards
+        requried resource is busy
+        single memory
+          pipeline bubble: instruction fetch has to stall for load/store instruction
+          solution: provide separate instruction / data memories
+        register
+          access very fast, so write during first half and read during second half
+          or build regfile with independent read and write ports
+      data hazard
+        need to wait for previous instruction to complete its data read/write
+        solution: forwarding / bypassing
+          use result when it is computed. requires extra connections in the datapath
+          forwarding path: [rs, rt] --> [forwarding unit (-> multiplexer -> ALU)] <-- [EX/MEM/WB register]
+        load-use data hazard
+          cannot always avoid stalls -> no-op
+      control hazard (BEQ / BNE)
+        deciding on control action depends on previous instructiojn 
+        simple solution: stall on every branch until new PC value (2 stalls per branch)
+        optimization #1: insert special branch comparator in stage 2, set new PC as soon as instruction decoded (1 stalls per branch)
+        optimization #2: predict outcome (simplest to predict NOT taken)
+        optimization #3: branch-delay slot (always execute instruction after branch. used by MIPS)
+          put no-op in the branch slot or place some instruction preceding the branch in the slot
+        dynamic branch prediction
+          branch prediction buffer / branch history table
+          indexed by recent branch instruction address
+          stores outcome (taken / not taken)
+          update if wrong
+          1-bit predictor shortcoming: inner / outer branch
+          use 2-bit predictor: only change prediction on two successive misprediction
+      sometimes can reorder code to avoid stalls

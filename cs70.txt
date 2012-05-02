@@ -1,1 +1,105 @@
-/Users/dementrock/homework/cs70/final
+E(X^2) = E((X1+...+Xn)^2) = sum_i E(Xi^2) + sum_{i!=j} E(XiXj)
+variance: Var(X) = E((X - E(X)))^2 (definition) = E(X^2) - (E(X))^2
+standard deviation: sigma(X) = sqrt(Var(X))
+
+random walk: E(X^2) = n, Var(X) = n
+binomial distribution: E(X^2) = n^2p^2 + np(1-p), Var = np(1-p)
+Poisson distribution: E(X^2) = lambda * (lambda + 1), Var(X) = lambda
+Number of fixed points in a random permutation: E(X^2) = 2, Var(X) = 1
+
+Markov's inequality: For a nonnegative r.v. X with E(X) = miu, and any alpha > 0, Pr[X >= alpha] <= E(X) / alpha
+  proof technique: note sum_a a*Pr[X=a] >= sum_{a >= alpha} a*Pr[X=a]
+Chebyshev's inequality: For a random variable X with expectation E(X) = miu, and for any alpha > 0, Pr[|X-miu| >= alpha] <= Var(X) / alpha^2
+  proof technique: define r.v. Y := (X-miu)^2. Pr[|X-miu| >= alpha] = Pr[Y >= alpha^2]. Apply Markov's inequality
+  corollary: r.v. X with E(X) = miu, sigma = sqrt(Var(X)), Pr[|X-miu| >= beta*sigma] <= 1 / beta^2
+
+i.i.d: independent, identically distributed
+
+for any r.v. X and constant c, Var(cX) = c^2Var(X)
+
+estimate a proportion p by taking a small sample
+  An = Sn / n = (X1 + ... + Xn) / n
+  Var(An) = Var(Xi) / n = p(1-p) / n
+  Pr[|An-p| >= epsilon*p] <= Var(An) / (epsilon*p)^2 <= delta
+    => n >= (sigma^2 / miu^2) * 1 / (epsilon^2 * delta)
+    => n >= (1-p)/p*1/(epsilon^2 * delta)
+
+Law of Large Numbers: X1, ..., Xn i.i.d. r.v. with common E(Xi) = miu. Define An := 1/n sum_i Xi. Then for any alpha > 0, we have Pr[|An - miu| >= alpha] -> 0 as n -> oo
+
+joint distribution: collection of values {(a, b, Pr[X=a, Y=b]): (a, b) in A cross B}
+  E(f(X,Y)) = sum_c c*Pr[f(X,Y)=c] = sum_a sum_b f(a,b)*Pr[X=a,Y=b]
+  Pr[X=a] = sum_{b in B} Pr[X=a, Y=b]
+  Pr[Y=b] = sum_{a in A} Pr[X=a, Y=b]
+
+independent r.v.'s: X, Y independent if the events X=a and Y=b are independent for all values a,b. Or Pr[X=a,Y=b] = Pr[X=a]Pr[Y=b] forall a,b
+  X,Y independent => E(XY) = E(X)E(Y)
+  X,Y independent => Var(X+Y) = Var(X) + Var(Y)
+
+covariance of X, Y: E(XY) - E(X)E(Y)
+
+conditional distribution: X given Y=b is collection of values {(a, Pr[X=a|Y=b]): a in A}
+
+conditional expectation: E(X|Y=b) = sum_{a in A} a * Pr[X=a|Y=b]
+
+total expectation law: E(X) = sum_{b in B} Pr[Y=b] * E(X|Y=b)
+
+{(i, Pr[X=i]): i = 1, ..., n}: prior distribution of the hidden X.
+{(i, Pr[X=i|Y1=H]): i = 1, ..., n}: posterior distribution of X given the observation.
+
+Pr[Y2=H|Y1=H] = sum_{i=1}^n Pr[X=i|Y1=H] * Pr[Y2=H|X=i, Y1=H]
+
+conditional independence: A and B are said to be conditionally independent given C if Pr[A, B|C] = Pr[A|C] * Pr[B|C]
+
+MAP (maximum a posteriori) rule: guess the value a* for which the conditional probability of X=a* given the observations is the largest
+
+error probability analysis:
+  Pr[E] = Pr[sum_i Z_i > n/2] = sum_{k=ceil(n/2)}^n {n choose k} p^k(1-p)^(n-k)
+        = Pr[S > n/2] < Pr[|S-np|>n(1/2-p)] <= Var(S)/(n^2(1/2-p)^2) = p(1-p)/(1/2-p)^2 * (1/n)
+
+probability density function: a function f:R->R s.t. Pr[a<=X<=b] = int_a^b f(x)dx for all a <= b
+  condition: int_-oo^oo f(x) dx = 1
+
+X discrete, Y = cX => distribution of Y: Pr[X=a] = Pr[Y=a/c]
+X continuous, Y = cX => pdf of Y: f_Y(x) = 1/c f_X(x/c)
+
+expectation: E(X) = int_-oo^oo xf(x) dx
+
+variance: Var(X) = E((X - E(X))^2 = int_-oo^oo x^2f(x) dx - (int_-oo^oo xf(x) dx)^2
+
+joint density: a function f:R^2->R s.t. Pr[a<=X<=b, c<=Y<=d] = int_c^d int_a^b f(x,y) dxdy for all a<=b, c<=d
+
+independence for continuous r.v.'s: events a<=X<=b and c<=Y<=d are independent for all a,b,c,d. or f(x,y) = f1(x)f2(y)
+
+exponential distribution: f(x) = lambda*e^(-lambda*x) if x>=0 else 0 (lambda > 0) (with parameter lambda)
+  E(X) = 1/lambda, E(X^2) = 2/lambda^2, Var(X) = 1/lambda^2
+  Pr[X>t] = int_t^oo lambda*e^(-lambda*x) dx = e^(-lambda*t)
+  memoryless property: exponential distribution & geometric distribution
+    Pr[X>s+t | X>t] = Pr[X>s]  (s > 0, t > 0)
+  X1 exp with param l_1, X2 exp with param l_2 => Y = min{X1, X2} exp with param l_1+l_2
+
+Normal distribution: X ~ N(miu, sigma^2). f(x) = 1/sqrt(2*pi*sigma^2) * e^(-(x-miu)^2 / (2*sigma^2)) (sigma > 0)
+  when miu=0 and sigma=1, standard normal distribution
+  in general, Y = (X-miu) / sigma has the standard normal distribution
+
+Central Limit Theorem: Let X1,...,Xn be i.i.d.r.v. with common expectation miu=E(Xi) and variance sigma^2=Var(Xi) (both assumed to be <oo). Define A'n = (sum_i Xi-n*miu) / (sigma*sqrt(n)). Then as n->oo, the distribution of A'n approaches the standard normal distribution in the sense that, for any real alpha,
+  Pr[A'n<=alpha] -> 1/sqrt(2pi) int_-oo^alpha e^(-x^2/2) dx as n->oo
+
+bijection from N to Z: f(x) = x/2 if x is even else -(x+1)/2
+
+Cantor-Bernstein theorem: if |A| <= |B| and |B| <= |A| then |A| = |B|
+
+injection from N to Q: N -> Z*Z -> Q. The latter by mapping rational number to 2D points, and go by spiral
+
+finite binary strings countable (prove by listing strings in increasing order of length, and then in lexicographic order)
+
+set of all polynomials with natural number coefficients countable
+
+[0, 1] uncountable. prove by diagonalization, add 2 to each digit
+
+cantor set: repeatedly remove 1/3 ~ 2/3 of interval. uncountable set of measure 0
+  represent each number as ternary strings. C = {x in [0,1]: x has ternary representation of only 0's and 2's}
+  divide each ternary string by 2 -> onto [0, 1]
+
+S countably infinite => |P(S)| > |S|
+
+halting problem: Turing(P): if TestHalt(P, P) = "yes" then loop forever; else halt. Turing(Turing) contradiction

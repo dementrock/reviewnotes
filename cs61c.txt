@@ -1,1 +1,114 @@
-/Users/dementrock/homework/cs61c/final
+miltiprocessors (MIMD)
+  cache
+    when any processor has cache miss or writes, notify other processors via interconnection network
+      if only reading, many processors can have copies
+      if a processor writes, invalidate all other copies
+    false sharing
+      different processors read & write data in the same cache block
+  threads
+    thread of execution: smallest unit of processing scheduled by operating system
+    single processor, multithreading by time-division multiplexing
+      processor switched between different threads
+      context switching fast enough
+    multiprocessor (multicore), threads run at same time on different processors
+  openmp: API for multi-threaded, shared memory parallelism
+    data race: 2 memory accesses from different threads to same location
+      results can vary
+      avoid by synchronizing writing and reading
+    pragma: a mechanism C provides for language extensions
+      compilers that don't recognize a pragma are supposed to ignore them
+    fork/join parallelism
+      master thread -> [enter parallel code] fork worker threads -> join [end of parallel]
+    simple parallelization of for-loop
+      code
+        #pragma omp parallel for
+        for (i = 0; i < max; i++) blablabla;
+      must have canonical shape, no break / return / exit / goto inside loop
+      all variables declared outside for loop are shared by default
+    set threads via
+      omp_set_num_threads(NUM_THREADS);
+    invoking parallel threads
+      #pragma omp parallel
+      {
+        int ID = omp_get_thread_num();
+      }
+    reduction (operator:var)
+      declare variable inside for-loop private by default
+    omp_get_wtime()
+  strong scaling: problem size fixed (harder). speed-up
+  weak scaling: problem size proportional to increase in number of processors. scale-up
+
+hardware
+  electro-mechanical replays -> electronic vacuum tubes -> transistors
+  synchronous digital systems
+    example: MIPS
+    synchronous: all operations coordinated by a central clock
+    digital: represent all values by 2 discret values; high/low voltage for 1/0
+  switches
+    close switch, open switch, AND (series connection), OR (parallel connection)
+  transistors
+    high voltage (V_dd) represents 1 / true
+    low voltage (0V / ground) represents 0 / false
+    threshold voltage (V_th) decide if 0 or 1
+  CMOS transistor
+    MOS: Metal-Oxide on Semiconductor
+    C: complementary. use pairs of normally-open and normally-closed switches
+    source --|gate|--> drain
+    n-channel transistor: gate (_|_) open when voltage at Gate is low; close when voltage(gate) > voltage(threshold)
+      pass weak 0's, strong 1's
+    p-channel transistor: gate (_b_) close when voltage at Gate is low; open when voltage(gate) > voltage(threshold)
+      pass weak 1's, strong 0's
+    use pairs of N-type and P-type to get strong values
+    make sure there's always a path to V_dd or ground
+    never create a path from v_dd to ground
+    inverter / not gate
+    NAND gate
+  type of Synchronous Digital System circuits
+    combinational logic (CL) circuits: no history
+    sequential logic (SL) circults: store information. aka state element
+  symbols:
+    buffer: triangle. amplify signal
+    NOT: triangle + dot
+    AND, NAND
+    OR, NOR
+    multiplexer
+  boolean algebra
+    OR = +, AND = *, NOT = hat
+  state elements
+    usage: place to store values for some amount of time; control flow of information between combinational logic blocks
+  register
+    n instances of a (D-type) "Flip-Flop"
+  hardware timing
+    setup time: when the input must be stable before the edge of the CLK
+    hold time: when the input must be stable after the edge of the CLK
+    "CLK-to-Q" delay: how long it takes the output to change, measured from the edge of the CLK
+  max delay = setup time + CLK-to-Q delay + CL delay
+  logism
+    blue wires: value unknown
+    gray wires: not connected to anything
+    bright green: 1
+    dark green: 0
+  asserted (enabled, 1) / deasserted (0)
+  multiplexer: c = not(s)a + sb
+  adder / subtractor: si = XOR(ai, bi, ci), ci+1 = MAJ(ai, bi, ci) = aibi + aici + bici
+  critical path: path through CL that is worst case
+  steps to design a processor:
+    analyze instruction set -> datapath requirements
+      general steps of data path: instruction fetch (IF) -> decode / register read -> execute -> memory -> register write
+    select set of datapath components & establish clock methodology
+      components: combinational elements, state elements + clocking methodology, building blocks
+      storage element
+        memory: data-in + clk + write-enable + address + data-out
+        register: data-in + clk + data-out + write-enable
+        register file: RW + RA + RB + write-enable + clk + busW + busA + busB
+    assemble datapath meeting the requirements
+    analyze implementation of each instruction to determine setting of control points that effects the register transfer
+    assemble the control logic
+      formulate logic equations & design circuits
+  register transfer language
+    example: (ADDU) R[rd] <- R[rs] + R[rt]; PC <- PC + 4
+  pipelining
+    does not help latency of single task, but throughput of entire workload
+    multiple tasks operating simultaneously using different resources
+    potential speedup = number of pipeline stages
+    time to fill pipeline and time to drain it reduces speedup

@@ -1,0 +1,383 @@
+= Search and Planning =
+
+n: number of states
+b: average branching factor
+C*: cost of least cost solution
+s: depth of the shallowest solution
+m: max depth of the search tree
+
+Successor function: a function from state to (state, action, cost) triples
+search problem: state space + successor function + start state + goal test
+nodes in search trees contains states & entire plan
+
+DFS: not complete, not optimal, time infinite, space infinite
+DFS with cycle checking: complete, not optimal, time O(b^m), space O(bm)
+BFS: complete, not optimal (optimal if edge equal positive cost), time O(b^(s+1)), space O(b^(s+1))
+IDDFS: complete, not optimal, time O(b^(s+1)), space O(bs)
+UCS [Expand cheapest node first, orders by path cost, or backward cost g(n)]: complete, optimal, time O(b^(C*/e)), space O(b^(C*/e))
+Best First / Greedy Search [Expand node seems closest first, orders by goal proximity, or forward cost h(n)]
+A*: orders by f(n) = g(n) + h(n); stop when we dequeue a goal. 
+Admissible Heuristics: h(n) <= h*(n), no more than the true cost to a nearest goal. Ensures when goal node is expanded, no other partial state on fringe could be extended into a cheaper path to a goal state
+Proof of optimality of A* Tree Search: Imagine a suboptimal goal G is on the queue, some node n which is a subpath of G* must also be on the fringe. By admissibility f(n) = g(n) + h(n) <= g(G*) < g(G) = f(G). So n popped before G.
+Dominance: h_a >= h_c if for all n, h_a(n) >= h_c(n)
+Max of admissible heuristics is admissible
+Graph search: never expand the same state twice; before expanding, check to make sure the state is new
+Consistency: c(n, a, n') >= h(n) - h(n'). Real cost must always exceed reduction in heuristic. Ensure when any node n is expanded during graph search the partial plan that ended in n is the cheapest way to reach n
+Proof of optimality of A* Graph Search: Assume some nodes on path to G* that would have been in queue aren't, because some worse n' for the same state as some n was dequeued and expanded first. Take the highest such n in tree. Let p be the ancestor which was on the queue when n' was expanded. Assume f(p) < f(n). f(n) < f(n') because n' suboptimal. So f(p) < f(n'). p would have been expanded before n'. So n would have been expanded before n', too. Contradiction.
+
+Unary CSP: ...
+Binary CSP: each constraint relates at most two variables
+Uninformed algorithm:
+  Backtracking Search: DFS + only consider a single variable at each point (fix ordering) + only allow legal assignments at each point
+  Ordering Variables
+    Minimum Remaining Value (MRV): Choose the variable with the fewest legal values
+    Degree Heuristic: Tie-breaker among MRV variables, choose the variable participating in the most constraints on remaining _unassigned_ variables
+  Ordering Values
+    Least Constraining Value: Given a choice of variable, choose the value that rules out the fewest values in the remaining variables
+  Filtering
+    Forward Checking: Keep track of remaining legal values for unassigned variables. Terminate when any variable has no legal values
+    Arc Consistency
+      an arc X->Y is consistent if
+        for every x in X (tail), exists some y in Y (head) which could be assigned without violating a constraint
+      delete from X (tail) !
+      If X loses a value, neighbors of X need to be rechecked (X as head)
+      Runtime: O(n^2d^3)
+Tree-structured CSP
+  Can be solved in O(nd^2) time
+Nearly Tree-structured CSP
+  Instantiate a set of variables such that the remaining constraint graph is a tree
+  Cutset size c gives run time O(d^c (n-c) d^2)
+Iterative Improvement
+Hill Climbing
+  always choose the best neighbor
+  if no neighbors are better, quit
+  Could reach a local maximum
+  Improvement: random restarts / sideway steps
+
+Game
+deterministic zero-sum games
+  minimax
+  alpha-beta pruning
+    can search twice as deep
+    except for root, values for nodes could be approximate
+    alpha: best choice (highest) so far at any choice point along the path for MAX
+    beta: best choice (lowest) so far at any choice point along the path for MAX
+    code:
+      function max-value(state, alpha, beta)
+        v = -infty
+        for a, s in successors(state) do
+          v = max(v, min-value(s, alpha, beta))
+          if v >= beta then return v
+          alpha = max(alpha, v)
+        return v
+  speedup
+    limited depth & evaluation functions
+  iterative deepening (can help alpha-beta through pruning)
+Expectimax
+Expectiminimax
+Non-zero-sum utilities
+  each player maximizes its own utility
+
+Graph separation property
+  The fringe always separates the explored area from the unexplored
+
+Consistency property
+    if h(n) is consistent, then the values of f(n) along any path are nondecreasing
+        can draw contours of the state space!
+    whenever A* selects a node for expansion, the optimal path to that node has been found
+
+A* expands all nodes with f(n) < C*, no nodes with f(n) > C*
+if h2 dominates h1, then h2 will expand at most as many values as h1
+cost of a relaxed problem as heuristic is always admissible and consistent
+A* is optimally efficient
+  i.e. no other optimal algorithm is guaranteed to expand fewer nodes than A* except tie-breaking
+IDA*
+ cutoff by f value
+
+Utility: function from outcome to real numbers => maximize expected utility
+Theorem: any rational preferences can be summarized as a utility function
+Notation: A > B (A prefered over B); A ~ B (indifference between A and B); A >= B (B not preferred over A)
+rational preferences => behavior describable as maximization of expected utility. axioms:
+    orderability, transitivity
+    continuity (A > B > C => exists p, [p, A; 1 - p, C] ~ B)
+    substitutability (A ~ B => [p, A; 1 - p, C] ~ [p, B; 1 - p, C]
+    monotonicity (A > B => (p >= q <=> [p, A; 1 - p, B] >= [q, A; 1 - q, B])
+Theorem: Given preference, exits U s.t. U(A) >= U(B) <=> A >= B, U([p1, S1; ...; pn, Sn]) = sum(pi*U(Si))
+Money does not behave as a utility function. EMV (expected monetary value). U(L) < U(EMV(L)), risk-averse
+Human Rationality: A[0.8, 4k; 0.2, 0], B[1.0, 3k, 0, $0]; C[0.2, 4k; 0.8, 0], D[0.25, 3k; 0.75, 0]
+MDP (Markov Decision Process): sequential decision problem, fully observable, stochastic environment, Markov transition model
+    State, Action, Transition function, Reward function, start state, (terminal state)
+Markov: given present, past and future are independent
+Goal: optimal policy: function from state to action. Maximize expected utility. 
+s: state; (s, a): q-state; (s, a, s'): transition. T(s,a,s') = p(s'|s, a)
+stationary preferences: [r, r0, r1, ...] > [r, r0', r1', ...] <=> [r0, r1, ...] > [r0', r1', ...]
+Theorem: either additive utility or discounted utility if stationary utilities
+Infinite utility (no fixed deadline): finite horizon / absorbing state (terminal eventually) / discounting
+Value Iteration (initialization V*_0(a) = 0 for all a in A):
+    Q*_i(s, a) = sum_(s' in S) T(s,a,s') * [R(s,a,s') + gamma * V*_{i-1}(s')]
+    V*_i(s) = max_(a in A) Q*_i(s, a)
+    pi*_i(s) = argmax_(a in A) Q*_i(s, a)
+Bellman equations:
+    ** V*(s) = max_a sum_s' T(s,a,s') * [R(s,a,s') + gamma * V*(s')]
+    pi*(s) = argmax_(a in A) sum_s' T(s,a,s') * [R(s,a,s') + gamma * V*(s')]
+    Q*(s, a) = sum_s' T(s,a,s') * [R(s,a,s') + gamma * max_a' Q*(s',a')]
+Convergence: |V*_H(s) - V*_{H+1}(s)| <= gamma^(H+1) max_{s,a,s'} |R(s,a,s')|
+    NOT true that |V*(s) ? V*(s?)| <= max_a |R(s,a,s?)|
+Policy Iteration:
+    evaluation: starting in s and following pi, iterate until converge
+        V^{pi_k}_{i+1}(s) = sum_s' T(s,pi_k(s),s') * [R(s,pi_k(s),s') + gamma * V^{pi_k}_i(s')]
+    improvement
+        pi_{k+1}(s) = argmax_a sum_s' T(s,a,s') * [R(s,a,s') + gamma * V^{pi_k}(s')]
+
+= Probablistic Reasoning =
+
+Reinforcement Learning
+    simple model learning: count outcomes for s, a, normalize => T(s,a,s'); discover R(s,a,s') when experience (s,a,s')
+    direct evaluation (fixed policy)
+        repeatedly execute policy pi; average value of state s when visited
+    temporal difference learning (fixed policy)
+        sample: sample = R(s, pi(s), s') + gamma * V^pi(s')
+        update: V^pi(s') = (1 - alpha) * V^pi(s) + alpha * sample = V^pi(s') + alpha * (sample - V^pi(s))
+        recent samples more important; decreasing learning rate => converging average
+        disadvantage: cannot turn value into new policy (need T and R)
+    Q-learning
+        value iteration: Q*_{i+1}(s, a) = sum_(s' in S) T(s,a,s') * [R(s,a,s') + gamma * max_a' Q_i(s', a')]
+        sample: sample = R(s,a,s') + gamma * max_a' Q_i(s', a')
+        update: Q(s, a) = (1 - alpha) * Q(s, a) + alpha * sample
+        off-policy learning (learn without following it)
+        converge to optimal policy if: explore enough & learning rate small enough & not decrease too quickly; basically doesn't matter how to select actions
+    policy search: learns optima policy from subset of all policies
+    exploration: random actions (epsilon greedy)
+            probability epsilon to act randomly; otherwise current policy
+            - lower epsilon over time
+            - exploration function => explore areas whose badness is not established
+                f(value_estimate, count) = optimal utility e.g. f(u,n)=u+k/n
+                sample = R(s,a,s') + gamma * max_a' f(Q_i(s', a'), N(s', a'))
+    feature functions:
+        V(s) = w_1f_1(s) + ...; Q(s, a) = w_1f_1(s, a) + ...
+        function approximation (obtained by ? square difference & gradient):
+            difference = [r + gamma * max_a' Q(s',a')] - Q(s,a)
+            wi = wi + alpha * difference * fi(s,a)
+        overfitting: more features to learn than the actual data
+    policy search:
+        problem: often feature-based policies that work well aren't the ones approximate V / Q best
+        solution: learn the policy that maximizes rewards rather than value that predict rewards (nudge each feature weight up / down)
+
+Bayesian network
+    correct representation only if each node C.I. of other predecessors given its parents
+    space: O(n*2^(k+1)), directly influenced by at most k numbers
+    noisy-OR relation: q_cold = P(not fever | cold, not flue, not malaria). P(xi | parents(Xi)) = 1 - mult_{j:Xj=true} qj
+    cannot guarantee dependence
+    exists different network structure encoding the same C.I.
+
+Inference
+    by enumeration: O(n*2^n)
+    variable elimination: complexity depends on largest factor generated. size of factor = number of entries in table
+        insert evidence => eliminate hidden variables => normalize
+    NP-hard. 3-SAT: X1, ..., X7; Y1 = (X1 or X2 or not X3), ...; Y1, 2 = Y1 and Y2; ...; z = Y1,2,3,4 and Y5,6,7,8; query: P(z)=0?
+    polytree: directed graph with no undirected cycles. Exists ordering for linear algorithm
+
+Sampling
+    prior sampling
+        for i in [1..n]: sample xi from P(Xi | Parents(Xi))
+        S_PS: probability that a specific event is generated
+    rejection sampling
+        for i in [1..n]: sample xi from P(Xi | Parents(Xi)); if not consistent, quit for loop, no sample generated
+        problem: if evidence unlikely, reject a lot of samples; don't exploit evidence as sample
+    likelihood sampling
+        sample: for i in [1..n]: if Xi evidence: Xi = observation; w *= P(xi | Parents(Xi)); else sample xi from P(Xi | Parents(Xi))
+        for j = 1 to N do: x, w = weighted_sample(); W[x] = W[x] + w
+    gibbs sampling
+        initialize (set evidence; set all other variables to random values)
+        repeat: choose non-evidence variable --> sample this variable conditioned on nothing else changing
+        new sample can only be different in a single variable
+
+Most important equations for exam:
+    Value iteration:
+    Q-learning:
+
+notes from previous exam:
+    negative living reward & discount < 1 cannot be mutually expressed
+    minimum number of features to encode all policies = dimension of policy space
+    forced random MDP => change transition function
+    learning rate of 1.0 will converge if action is deterministic
+
+Markov Model: chain-structured Bayes net
+  each node identically distributed
+  state: value of X at a given time
+  P(X1), P(Xt|Xt-1) : transition probabilities / dynamics. specify how state evolves over time
+  first order Markov property: past and future independent of present; each time step only depends on the previous
+  mini-forward algorithm: P(xk) = sum_{xk-1} P(xk|xk-1)P(xk-1)
+  stationary distribution: dist. we end up independent of initial distribution. satisfy P_oo(X) = P_{oo+1}(X) = sum_x P_{t+1|t}(X|x) * P_oo(x)
+  web link analysis (pagerank)
+    each web page is a state
+    initial distribution: uniform over pages
+    transitions: with prob. c, uniform jump to a random page; with prob. 1-c, follow a random outlink
+
+Hidden Markov Models (HMM)
+  underlying Markov chain over state S
+  observe outputs (effects) at each time step
+  defined by
+    initial distribution: P(X1)
+    transitions: P(Xi|Xi-1)
+    emissions: P(E|X)
+  properties:
+    future depends on past via the present
+    current observation independent of all else given current state
+  real world examples
+    speech recognition: observation = acoustic signals; states = specific positions in specific words
+    machine translation: observation = words; state = options
+    robot tracking: observation = range readings; states = positions on a map
+  filtering / monitoring
+    the task of tracking the distribution Bt(X) = Pt(Xt|e1,...,et) (the belief state) over time
+  forward algorithm = variable elimination in order X1, X2, ...
+    Bt(xt) = P(xt|e1:t), B't(xt) = P(xt|e1:t-1)
+    time update: B't(xt) = sum_xt-1 P(xt|xt-1) * Bt-1(xt-1)
+    observation update: Bt(xt) = P(et|xt) * B't(xt)
+  particle filtering: approximate solution
+    particles = samples
+    represent P(X) by a list of N particles (generally N << |X|)
+    elapse time: each particle moved by sampling its next position from the transition model
+    observe: downweight samples based on the evidence: w(x) = P(e|x) => resample (draw with replacement)
+    improve performance
+      low variance resampling: choose a random number r and select those particles that correspond to u = r + (m-1)*1/M, where m=1,...,M
+        more systematic coverage of space of samples
+        if all samples have same importance weight, no samples are lost
+        lower computational complexity
+      regularization: introduce additional noice into transition model
+  best explanation queries
+    argmax_{x1:t} P(x1:t|e1:t) 
+      search algorithm
+        transform to argmax_{x1:t} sum_i log(P(xi|xi-1)P(ei|xi))
+        start state: (); action: in state xk, choose assignment for xk+1; cost: log(P(xk+1|xk)P(ek+1|xk+1)); goal: k==t
+        uniform cost graph search take O(td^2)
+      Viterbi algorithm
+        transform to argmax_{x1:t} P(x1:t, e1:t)
+        mt[xt] = max_{x1:t-1} P(x1:t-1, xt, e1:t = P(et|xt) max_{xt-1} P(xt|xt-1) mt-1[xt-1]
+  speech recognition
+    state: sound in the word
+    transition: stay in the same state (speak slowly) / move to next position in the word / move to start of next word
+
+Dynamic Bayes Nets (DBN)
+  track multiple variables over time, using multiple sources of evidence
+  repeat a fixed Bayes net at each time
+  discrete valued dynamic Bayes nets are also HMMs
+  exact inference: variable elimination
+    unroll the network for T time steps, then eliminate variables until P(X_T|e1:T) is computed
+  online belief updates: eliminate all variables from the previous time step; store factors for current time only
+  particle filters
+    particle: complete sample for a time step
+    initialize: generate prior samples for t=1 Bayes net
+    elapse time: sample a successor for each particle
+    observe: weight each entire sample by the likelihood of the evidence conditioned on the sample
+    resample: select prior samples in proportion to their likelihood
+
+decision networks: Bayes nets with nodes for utility and actions
+  MEU: choose the action which maximizes the expected utility given the evidence
+  graph representation
+    ellipse: chance nodes
+    rectangle: actions. cannot have parents. act as observed evidence.
+    diamond: utility nodes. depends on action and chance nodes
+  action selection
+    instantiate all evidence
+    set action nodes each possible way
+    calculate posterior for all parents of utility node, given the evidence
+    calculate expected utility for each action
+    choose maximizing action
+  difference from MDP / expectimax: propagate knowledge set (some information acquired from actions)
+  value of perfect information (VPI)
+    VPI(E'|e) = (sum_e' P(e'|e) * MEU(e,e')) - MEU(e)
+    MEU(e) = max_a sum_s P(s|e)U(s,a)
+    MEU(e,e') = max_a sum_s P(s|e,e')U(s,a)
+    nonnegative: Forall E', e: VPI(E'|e) >= 0
+    nonadditive: (counterexample obtaining same information twice) VPI(Ej,Ek|e) != VPI(Ej|e) + VPI(Ek|e)
+    order-independent: VPI(Ej,Ek|e) = VPI(Ej|e) + VPI(Ek|e, Ej) = VPI(Ek|e) + VPI(Ej|e, Ek)
+
+POMDP: partially observable MDP
+  = MDP + observations (O) + observation function P(o|s) (or O(s,o))
+  VPI-based agent
+    
+= Machine Learning =
+
+parameter estimation: estimate distribution of random variable
+  empirical rate
+    P(x) = count(x) / total samples
+    maximizes likelihood of data
+    problem: overfitting
+  Laplace smoothing
+    P_k(x) = (c(x) + k) / (N + k|X|)
+    k: strength of the prior
+    for conditionals: smooth each condition independently
+      P_k(x|y) = (c(x,y) + k) / (c(y) + k|X|)
+  linear interpolation
+    incentive: Laplace smoothing often performs poorly for P(X|Y) when |X| or |Y| too large
+    P_LIN(x|y) = alpha * P(x|y) + (1.0 - alpha) * P(x)
+
+classification
+  data: labeled instances. training set + held out set + test set
+  features: attribute-value pairs which characterize each x
+  experimentation cycle:
+    learn parameters on training set
+    tune hyperparameters (k, alpha in smoothing) on held-out set
+    compute accuracy of test set (fraction of instances predicted correctly)
+  overfitting: fitting the test data closely, but not generalizing well
+  generalization: want a classifier which does well on test data
+
+naive Bayes: independent features given class
+  P(Y, F1...Fn) = P(Y) prod_i P(Fi|Y)  
+  parameters: local conditional probability tables
+  |Y| * |F|^n parameters -> |Y| + n * |F| * |Y| parameters
+  total number of parameters linear in n
+  naive Bayes for text
+    bag-of-words model: each position identically distributed
+  baseline: evaluate accuracy
+    weak baseline: give all test instances the most common label
+    strong baseline: previous work
+  confidence of a classifier: confidence(x) = max_y P(y|x)
+  calibration
+    weak calibration: higher confidence -> higher accuracy
+    strong calibration: confidence predicts accuracy rate
+  handle errors: add more features
+
+perceptrons
+  generative classifiers: a causal model with evidence variables
+    e.g. naive Bayes
+  discriminative classifiers: predict the label Y directly from X
+    no causal model, no Bayes rule, often no probabilities at all
+    robust, accurate with new features
+    mistake driven rather than model driven
+  linear classifiers
+    inspiration: human neurons
+    input: feature values with weights
+    activation_w(x) = sum_i wi*fi(x) = w dot f(x)
+    binary: compare features to a weight vector
+  binary
+    decision rule
+      any weight vector is a hyperplane in the space of feature vectors
+      positive => +1 / negative => -1
+    perceptron update
+      start with zero weights
+      for each training instance:
+        classify with current weights: w dot f(x) >=0 => y = +1
+        if wrong, adjust the weight vector by adding or subtracting the feature vector: w = w + y^* dot f
+  multiclass
+    decision rule
+      a weight vector for each class: w_y
+      score of a class y: w_y dot f(x)
+      predict highest score wins: y = argmax_y w_y dot f(x)
+      binary = multiclass where negative class has weight zero
+    perceptron update
+      classify with current weights: y = argmax_y w_y dot f(x)
+      if wrong, lower weight of wrong answer, raise weight of right answer by f(x)
+  properties:
+    separability: some parameters get the training set perfectly correct
+    (binary case) convergence: if the training is separable, perceptron will eventually converge
+    (binary case) mistake bound: the maximum number of mistakes related to the margin / degree of separability: #mistakes < k / delta^2
+  problems
+    noise: if data not separable, weights might thrash
+    mediocre generalization: finds a barely separating solution
+    overtraining: test / held-out accuracy usually rises, then falls (a kind of overfitting)
+  MIRA: margin infused relaxed algorithm
+    choose an update size that fixes the current mistake, but minimizes the change to w             
+    min_w 1/2 sum_y norm(w_y - w'_y)^w subject to w_y* dot f(x) >= w_y dot f(x) + 1
+

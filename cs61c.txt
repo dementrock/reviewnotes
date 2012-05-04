@@ -1,4 +1,4 @@
-miltiprocessors (MIMD)
+multiprocessors (MIMD)
   cache
     when any processor has cache miss or writes, notify other processors via interconnection network
       if only reading, many processors can have copies
@@ -158,3 +158,40 @@ hardware
           1-bit predictor shortcoming: inner / outer branch
           use 2-bit predictor: only change prediction on two successive misprediction
       sometimes can reorder code to avoid stalls
+  greater instruction level parallelism
+    deeper pipeline => less work per stage => shorter clock cycle
+    multiple issue superscalar
+      replicate pipeline stages => multiple pipelines
+      multiple instructions per clock cycle
+      IPC: instructions per cycle
+      static multiple issue
+        compiler group instructions that can be issued in a single cycle
+          determined by pipeline resource required
+        packages them into issue slots
+        VLIW: very long instruction word
+        issue
+          compiler must remove some/all hazards
+          no dependencies with a packet
+          possibly some dependencies between packets, varies between ISAs, compiler must know
+          pad with noop if necessary
+        MIPS + static dual issue
+          1 ALU/branch + 1 load/store
+          pad unused instruction with noop
+          datapath:
+            1 extra 32-bit instruction, sign ext, write port, reg read ports, ALU
+          hazards
+            EX data hazard (can be avoided by forwarding in single-issue)
+              split into two packets, effectively a stall
+            load-use latency
+              still one cycle latency, but now two instructions
+        loop unrolling
+          replicate loop body to expose more parallelism, reduces loop control overhead
+          register renaming
+            use different registers per replication
+            avoid loop-carried anti-dependencies
+      dynamic multiple issue
+        CPU examines instruction stream and chooses instructions to issue each cycle
+          avoid structural and data hazards
+        compiler can help by reordering instructions
+        CPU resolves hazards using advanced techniques at runtime
+

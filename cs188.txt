@@ -379,5 +379,10 @@ perceptrons
     overtraining: test / held-out accuracy usually rises, then falls (a kind of overfitting)
   MIRA: margin infused relaxed algorithm
     choose an update size that fixes the current mistake, but minimizes the change to w             
-    min_w 1/2 sum_y norm(w_y - w'_y)^w subject to w_y* dot f(x) >= w_y dot f(x) + 1
-
+    {min_w 1/2 sum_y(norm(w_y - w'_y)^2)} subject to w_y* dot f(x) >= w_y dot f(x) + 1
+    when guessed wrong: w_y = w'_y - tau * f(x); w_y^* = w'_y^* + tau * f(x)
+    r = ((w'_y - w'_y^*) dot f + 1) / (2f dot f)
+    in practice, also bad to make updates that are too large => cap maximum possible tau with some constant C
+    usually converges faster than perceptron, usually better esp. on noisy data
+  support vector machines: maximizes the margin, only support vectors matter
+    {min_w 1/2 norm(w)^2} subject to forall i,y: w_y^* dot f(xi) >= w_y dot f(x_i) + 1

@@ -1,3 +1,177 @@
+= before midterm =
+
+CAPEX: capital expenditure
+OPEX: operating expense
+
+clock rate / clock frequency: #clock cycles per second
+5 components of a computer: control, datapath, memory, input, output
+
+request level parallelism
+data level parallelism
+  lots of data in memory that can be operated in parallel
+  lots of data on many disks that can be operated on in parallel
+
+jal only change bottom 28 bits
+
+job-level parallelism / process-level parallelism
+  running independent programs on multiple processors
+parallel processing program
+  single program running on multiple processors
+
+SISD single instruction, singe data stream; SIMD; MISD; MIMD
+
+Amdahl's law: 1 / (1 - F + F / S)
+  F: portion of speed up part
+  S: speed up
+
+strong scaling: speedup without increasing size of problem
+weak scaling: --
+
+big-endian: use the address of the leftmost byte
+little-endian: 
+
+Design principle
+1. simplicity favors regularity
+2. smaller is faster
+3. make the common case fast
+4. good design demands good compromises
+
+two's complement: ~x + 1
+int: -2^31 ~ 2^31 - 1
+
+sltu: an unsigned comparison of x < y also checks if x is negative as well as if x is less than y.
+
+program counter (PC)
+jal: saves PC+4 in $ra
+
+preserved: $s0-$s7, $sp, $ra, stack above the stack pointer
+not preserved: $t0-$t9, $a0-$a3, $v0-$v1, stack below the stack pointer
+
+$fp
+  The segment of the stack containing a procedure’s saved registers and local variables is called a procedure frame or activation record.
+  a frame pointer offers a stable base register within a procedure for local memory-references.
+
+dynamic data: heap
+
+j location: immediate addressing
+jal: register addressing
+bne $s0, $s1, EXIT: PC-relative addressing (relative to PC+4, refer to number of _words_, offset * 4 + 4)
+
+C program -- compiler --> Assembly language program -- assembler --> Machine language module (+ library routine) -- linker --> executable -- loader --> memory
+
+structure of object file
+  object file header: size and position of other pieces
+  text segment: machine language code
+  static data segment: data allocated for the life of the program
+  relocation information: identifies instructions and data words that depend on absolute addresses when the program is loaded into memory.
+  symbol table: contains the remaining labels that are not defined, such as external references.
+  debugging information: contains a concise description of how the modules were compiled so that a debugger can associate machine instructions with C source files and make data structures readable.
+
+Loader of program
+1. Reads the executable file header to determine size of the text and data segments.
+2. Creates an address space large enough for the text and data.
+3. Copies the instructions and data from the executable file into memory.
+4. Copies the parameters (if any) to the main program onto the stack.
+5. Initializes the machine registers and sets the stack pointer to the first free location.
+6. Jumps to a start-up routine that copies the parameters into the argument registers and calls the main routine of the program. When the main routine returns, the start-up routine terminates the program with an exit system call.
+
+temporal locality
+spacial locality (a block must be bigger than just one word)
+
+main memory: DRAM; caches: SRAM
+block / line: the minimum unit of information that can be either present / not present
+hit / miss
+miss rate = 1 - hit rate
+hit time: time to access the upper level of the memory hierarchy (includes the time to determine hit or miss)
+miss penalty: the time to replace a block in the upper level with the corresponding block from the lower level, plus the time to deliver this block to the processor
+
+fully associative: block can go anywhere
+N-way associative: N places for a block
+
+direct mapped cache (N = 1): each memory location is mapped directly to exactly one location in the cache.
+  mapping: (block address) mod (number of blocks) (index bits)
+  block address = floor(byte address / bytes per block)
+  add a set of tags (only upper portion of the address)
+  valid bit: 1 => match; 0 => nonsense values
+  
+  valid bit + tag + data
+
+  32-byte address, cache size 2^n blocks => index field, block size 2^m words (2^(m+2)) bytes => block offset
+  size of tag field: 32 - (n + m + 2)
+
+  don't need to store index / block offset in cache
+
+  total number of bits in cache: 2^n * (block size + tag size + valid bit size)
+  block 2^m words = 2^(m+5) bits
+
+  2^n * (2^m * 32 + (32 - n - m - 2) + 1)
+
+  usually only count size of data (block)
+
+  ** block index field: select word from a block
+
+increase the block size may:
+  decrease miss rate
+  increase miss rate if block size too large, therefore number of blocks will be small
+    => a block will be bumped out before many of its words is accessed
+    => decrease spatial locality
+  cost of miss increases (transfer the whole block from next level)
+
+write
+  write-through
+    always to write the data into both the memory and the cache.
+    write miss:
+      We first fetch the words of the block from memory. After the block is fetched and placed into the cache, we can overwrite the word that caused the miss into the cache block. We also write the word to main memory using the full address.
+      write allocate / no write allocate (whether overwrite appropriate portion of block in cache)
+    too slow
+    write buffer
+      After writing the data into the cache and into the write buffer, the processor can continue execution. When a write to main memory completes, the entry in the write buffer is freed. If the write buffer is full when the processor reaches a write, the processor must stall until there is an empty position in the write buffer.
+  write-back
+    when a write occurs, the new value is written only to the block in the cache. The modified block is written to the lower level of the hierarchy when it is replaced.
+    include a "dirty" bit to see if wrote to block or not
+
+AMAT = average memory access time = time for a hit + miss 
+
+CPI with stalls = CPI ideal + instruction miss rate * miss penalty + %load and stores * data miss rate * miss penalty
+                = CPI ideal + read-stall cycles + write-stall cycles
+  read-stall cycles = reads/program * read miss rate * read miss penalty
+  write-stall cycles = (writes/program * write miss rate * write miss penalty) + write buffer stalls
+local miss rate: the fraction of references to one level of a cache that miss
+local miss rate L2$ = $L2 misses / $L1 misses
+
+global miss rate: the fraction of references that miss in all levels of a multilevel cache
+
+
+
+improve cache performance
+  reduce time to hit in the cache
+    smaller cache
+  reduce the miss rate
+    bigger cache
+    larger blocks
+  reduce miss penalty
+    smaller blocks
+    multiple cache levels
+    higher DRAM memory bandwidth (faster DRAMS)
+    write buffer to hold dirty blocks being replaced
+
+
+different design considerations
+  L1: minimize hit time
+  L2: reduce miss rate
+
+
+ALU: arithmetic logical unit
+
+CPU time = Instruction Count * Clocks Per Instruction with stall * Clocks Cycle
+
+maximum block size for matrix multiplication
+  3 blocks of size r*r: 3r^2 = M
+split cache
+  A scheme in which a level of the memory hierarchy is composed of two independent caches that operate in parallel with each other, with one handling instructions and one handling data.
+
+= after midterm =
+
 multiprocessors (MIMD)
   cache
     when any processor has cache miss or writes, notify other processors via interconnection network
@@ -192,6 +366,147 @@ hardware
       dynamic multiple issue
         CPU examines instruction stream and chooses instructions to issue each cycle
           avoid structural and data hazards
+          not all stalls are possible
+          can't always schedule around branches
+          different implementations of an ISA have different latencies and hazards
         compiler can help by reordering instructions
         CPU resolves hazards using advanced techniques at runtime
+        OOO: out of order execution (still commit result to registers in order)
+      speculation: start operation as soon as possible, check whether guess was right
+        if not, roll-back and do the right thing
+        branch prediction: roll back if path taken is different
+        load: roll back if location is updated
+      structure
+        1 instruction fetch and issue unit: issue instructions in program order
+        many parallel functional units
+          input buffers called reservation stations
+          holds operands and records the operation
+          can execute instructions out-of-order
+        1 commit unit
+          gets results from functional unit and saves in buffers called reorder buffer
+          stores results once branch resolved
+          commits results in program order
+        in-order issue -> out-of-order execution -> in-order commit
+      out-of-order execution: unroll loops in hardware
+        fetch instructions in program order (<= 4 / clock)
+        predict branches as taken / untaken
+        rename registers using a set of internal registers to avoid hazards
+        collection of renamed instructions might execute in a window
+        execute instructions with ready operands in 1 of multiple functional units (ALUs, FPUs, ld/st)
+        buffer results of executed instructions until predicted branches are resolved in reorder buffer
+        if predicted branch correctly, commit results in program order
+        if predicted branch incorrectly, discard all dependent results and start with correct PC
 
+big picture on parallelism
+  in applications
+    data-level parallelism / DLP
+    task-level parallelism / TLP
+  in hardware
+    instruction-level parallelism / ILP
+    SIMD architectures
+    thread-level parallelism
+    request-level parallelism
+
+source of cache misses (3C)
+  compulsory: cold start of process migration, first reference
+    solution: increase block size (increases miss penalty; very large blocks could increase miss rate)
+  capacity:
+    cache cannot contain all blocks accessed by the program
+    solution: increase cache size (may increase access time)
+  conflict:
+    multiple memory locations mapped to the same cache location
+    solution: increase cache size / associativity (may increase access time)
+
+set associative cache
+  divide cache into sets, each consists n ways (n-way set associative) to place memory block
+  memory block maps to unique set determined by index field and is placed in any of the n-ways of that set
+  calculation: (block address) module (# sets in the cache)
+  number of sets * associativity = total size of cache in blocks
+  range of set-associative caches
+    tag (used for tag compare) | index (selects the set) | block offset (selects the word in the block) | byte offset
+    <--decreasing associativity     increasing associativity-->
+  cache block replacement policy
+    random replacement
+    LRU: least recently used
+      hardware keeps track of access history
+      replace the entry that has not been used for the longest time
+      for 2-way set-associative cache, need one bit for LRU replacement
+    pseudo LRU
+      hardware replacement pointer points to one cache entry
+      whenever access is made to the entry the pointer points to, move the pointer to the next entry`
+  costs: N-ways need N comparators; MUX delay (set selection) before data available
+    cache miss: least recently used (LRU)
+      must trach when eacy way's block was used relative to other blocks in the set
+  largest gains are in going from direct mapped to 2-way
+
+calculate 3C using cache simulator
+  compulsory: set cache size to infinity and fully associative. count number of misses
+  capacity: change cache size from infinity (usually in power of 2), and count misses for each reduction in size
+  conflict: change from fully associative to n-way set-associative while counting misses
+
+design considerations
+  L1 cache focuses on fast access. minimize hit time. miss penalty significantly reduced by presence of L2 cache
+  L2/L3 focus on low miss rate. local miss rate >> global miss rate
+
+improving cache performance
+  reduce time to hit in the cache
+    smaller cache, direct-mapped cache, special tricks for handling writes
+  reduce miss rate in L2, L3
+    bigger cache, larger blocks
+    more flexible placement (increase associativity)
+  reduce miss penalty in L1
+    smaller blocks or critical words first in large blocks
+    special tricks for handling for writes
+    faster / higher bandwidth memories
+    use multiple cache levels
+
+dependability via redundancy
+  spatial redundancy: replicated data or check information or hardware to handle hard and soft (transient) failures
+  temporal redundancy: redundancy in time (retry) to handle soft (transient) failures
+  measures
+    reliability: mean time to failure / MTTF
+    service interruption: mean time to repair / MTTR
+    mean time between failures / MTBF = MTTF + MTTR
+    availability = MTTF / (MTTF + MTTR). shorthand: number of 9s of availability per year
+    annualized failure rate / AFR
+  improving availablity
+    increase MTTF: more reliable hardware/software + fault tolerance
+    reduce MTTR: improved tools and processes for diagonis and repair
+  design principle
+    no single points of failure. limited by part you do not improve
+  error detection/correction code: EDC/ECC
+    protect against memory system failures
+      soft errors: occur when cells are struck by alpha particles or other environmental upsets
+      hard errors: occur when chips permanently fail
+    each data word mapped to unique code word with sparse population
+    detection: bit pattern fails codeword check
+    correction: map to nearest valid code word
+    with 3-bit
+      Hamming distance 2: detection. no 1-bit error goes to another valid code
+      Hamming distance 3: correction. no 2-bit error goes to another valid code. 1-bit error near
+    Hamming distance = difference in #bits
+    parity: simple error detection coding
+      data value before written: tag with extra bit to force the stored word even parity
+      when read: check parity
+      minimum Hamming distance = 2
+      only detect odd number of errors
+    Hamming Error Correction Code
+      encoding
+        use of extra parity bits to allow the position identification of a single error
+        mark all bit positions that are powers of 2 as parity bits (start numbering bits at 1 at left)
+        all other bit positions are data bits
+        each data bit covered by 2 or more parity bits
+        the position of parity bit determines the sequence of data bits that it checks
+          bits with kth least significant bit of address = 1
+        set parity bits to create even parity for each group
+      correction
+        add up incorrect parity bits => location of bad bit
+      p: total number of parity bits; d: number of data bits in p+d bit word
+      p >= log(p+d+1)
+      adding extra parity bit p' covering the entire word provides double error detection: Hamming distance = 4
+        H=p'=0 no error; H!=0, p'=1 correctable single error; H!=0, p'=0 double error; H=0, p'=1 single error in p'
+    cyclic redundancy check
+      for block of k bits, transmitter generates an n-k bit frame check sequence
+      transmits n bits divisible by some number
+      receiver divides frame by that number. no remainer => assume no error
+      disks detect and correct blocks of 512 bytes with Reed Solomon codes

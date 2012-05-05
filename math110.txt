@@ -1,3 +1,124 @@
+= before midterm 1 =
+
+Definitions:
+vector space: a set V along with an addition and scalar multiplication on V such that
+commutativity, associativity, additive identity, additive inverse, multiplicative identity, distributive properties
+P_m(F): degree at most m
+subspace: additive identity, closed under addition, closed under scalar multiplication
+direct sum: V is the direct sum of subspaces U_1, ..., U_m if each element of v can be written uniquely as a sum u_1 + ... + u_m
+linearly independent (including empty list)
+basis: a list of linearly independent vectors that spans V
+linear map: additivity, homogeneity ( aT(v) = T(av))
+
+prop: V = U1 direct U2 direct ... direct Um iff
+    V = U1 + ... + Um
+    and the only way to write 0 is by taking all ui 0
+prop: V = U1 direct U2 iff V = U1 + U2 and U1 intersect U2 = {0}
+Linear Dependence Lemma: If (v1, ... ,vm) is linearly dependent in V and v1 != 0, then exists j in {2, ..., m} such that:
+    vj in Span(v1, ..., v_{j-1})
+    if the jth term is removed from (v1, ..., vm), the span of the remaining list still equals span(v1, ..., vm)
+Theorem: In a finite-dimensional vector space, the length of every linearly independent list of vectors is less than or equal to the length of every spanning list of vectors.
+    Proof by adjoining vi to wi
+Prop: Every subspace of a finite-dimensional vector space is finite dimensional
+Prop: A list (v1, ..., vn) of vectors in V is a basis of V iff every v can be written uniquely.
+Theorem: Every spanning list in a vector space can be reduced to a basis of the vector space.
+    Proof by discarding vectors not in the span of previous vectors
+Theorem: Every linearly independent list of vectors in a finite-dimensional vector space can be extended to a basis of the vector space.
+Prop: Suppose V is finite dimensional and U is a subspace of V. Then there is a subspace W of V such that V = U direct W.
+    Proof by extending a basis of U to a basis of V
+Prop: If V is finite dimensional, then every spanning list of vectors in V with length dim V is a basis for V
+Prop: If V is finite dimensional, then every linearly independent list of vectors in V with length dim V is a basis of V.
+Theorem: If U1 U2 subspaces, then dim(U1+U2) = dim U1 + dim U2 - dim(U1 intersect U2)
+Prop: Suppose U1, ..., Um subspaces s.t. V = U1 + ... + Um and dim V = dim U1 + ... + dim Um, then V = U1 direct ... direct Um
+Prop: Linear map T is injective iff null T = {0}
+Theorem: V finite and T linear map form V to W, then dim V = dim null T + dim range T
+Corollary: If V and W are finite-dimensional vector spaces such that dim V > dim W , then no linear map from V to W is injective.
+Corollary: If V and W are finite-dimensional vector spaces such that dim V < dim W , then no linear map from V to W is surjective.
+Prop: a linear map is invertible (exists S such that ST = TS = I) iff it is injective and surjective
+Prop: Suppose that (v1, ... , vn) is a basis of V and (w1, ... ,wm) is a basis of W. Then M is an invertible linear map between L(V , W ) and Mat(m, n, F).
+    Proof by injectivity and surjectivity
+dim L(V,W) = (dimV)(dimW)
+Suppose V is finite dimensional. If T in  L(V), then the following are equivalent:
+(a) T is invertible; (b) T is injective; (c) T is surjective.
+
+General note:
+    Consider the special case of zero space.
+
+= before midterm 2 =
+
+Definition:
+    linear map: additivity, homogeneity ( aT(v) = T(av))
+    matrix of vector: basis coefficients representation
+    operator: a linear map from a vector space to itself L(V)
+    invertible: T linear map invertible if exists S s.t. ST = TS = I
+    invariant subspace under T: T(U) subset of U (condition that restriction is an operator)
+    eigenvalue: exists a *nonzero* vector s.t. ...
+    M(T, (v1, ..., vn)): default: standard basis
+    P_{U,W}(v) = u: v = u + w; V = U oplus W
+    inner product: positivity (v,v), definiteness (v,v), additivity in first slot, homogeneity in first slot, conjugate symmetry
+    Euclidean inner product on F^n: sum ui * bar(wi)
+    orthonormal list of vectors, orthonormal basis
+Prop:
+    Linear map T is injective iff null T = {0}
+    Theorem: V finite and T linear map form V to W, then dim V = dim null T + dim range T
+    Prop: Suppose that (v1, ... , vn) is a basis of V and (w1, ... ,wm) is a basis of W. Then M is an invertible linear map between L(V , W ) and Mat(m, n, F).
+    dim L(V,W) = (dimV)(dimW)
+    Suppose V is finite dimensional. If T in  L(V), then the following are equivalent:
+        (a) T is invertible; (b) T is injective; (c) T is surjective.
+    lambda root of p (deg m) iff exists q (deg m-1) s.t. p(z) = (z-lambda) * q(z)
+    p polynomial deg m => at most m roots
+    Foundamental Theorem of Algebra: every nonconstant polynomial with complex coefficients has a root
+    root => complex conjugate also root
+    p real polynomial nonconstant => unique factorization into deg <= 2 polynomials
+    l1, ..., lm distinct eigenvalues, v1, ..., vm nonzero eigenvectors => linearly independent
+        proof technique: contradiction. pick the first vk in span(v1,...,vk-1)
+    corollary: operator at most dim V eigenvalues
+    Every operator on a finite dimensional, nonzero, complex vector space has an eigenvalue
+        proof technique: pick nonzero v, construct (v, Tv, ..., T^n(v)). must be linearly dependent
+            factor the operator polynomial (at least one factor not injective) and get a root => eigenvalue
+    Prop: T in L(V), (v1, ..., vn) basis then
+              matrix upper triangular
+          <=> Tvk in Span(v1, ..., vk)
+          <=> span(v1, ..., vk) invariant under T
+    V complex vector space, T in L(V), then T has an upper triangular matrix w.r.t some basis of V
+        proof technique: use induction. partition V by U = range(T - lambda I), lambda eigenvalue. U invariant.
+            dim U < dim V. extend basis of U to V. proof property of upper triangular matrix
+    Suppose T in L(V) has an upper triangular matrix w.r.t some basis of V. T invertible <=> all entries on diagonal of u.t.m. nonzero.
+        proof technique:  prove contrapositive.
+            <=: if exists zero entry, Tvk in Span(v1, ..., vk-1). Construct linear map S: Span(v1,...,vk) -> Span(v1,...,vk-1) by Sv=Tv. not injective => exists v Tv = 0 => T not invertible
+            =>: if not invertible, exists v, Tv = 0 => T(a1v1+...+akvk) = 0, ak!=0 => Tvk in Span(v1,...,vk-1) => lambda_k must be 0
+    corollary: T in L(V) has u.t.m. Then eigenvalues precisely diagonal entries
+    distinct eigenvalues & # = dim V => exists diagonal matrix
+    T in L(V), l1, ..., lm distinct eigenvalues.
+        T has diagonal matrix <=>
+        V has a basis of eigenvectors <=>
+        exists 1-dim subspaces U1,...,Un s.t. V = U1+...+Un <=>
+        V = null(T-l1I) + ... + null(T-lmI) <=> 
+        dim V = dim null(T-l1I) + ... + dim null(T-lmI)
+        prove last to second: group basis of each subspace, sum of them an eigenvector. However eigenvector with different eigenvalues l.i.
+    Every operator on a finite-dimensional, nonzero, real vector space has an invariant subspace of dimension 1 or 2
+        proof technique: if quadratic, consider Span(u, Tu)
+        proof technique: if quadratic, consider Span(u, Tu)
+    Every operator on an odd-dimensional real vector space has an eigenvalue 
+        proof technique: induction on dimension. T = U oplus W, if U dim 2 , W not an invariant subspace
+            define Sw = P_{W,U} T(w). S has eigenvalue lambda. goal: find eigenvector in U+span(w)
+            consider u + aw (l eigenvalue of U): (T-lI)(u+aw) = Tu-lu + a(Tw-lw) = Tu-lu + a(P_{U,W}T(w)+P_{W,U}T(w)-lw) = Tu-lu + aP_{U,W}(Tw) in U. So maps U+span(w) to U. not injective
+    M(ST, (u1,...), (w1...)) = M(S, (v1...), (w1...))M(T, (u1...), (v1...))
+    Theorem: Suppose T in L(V). (u1..), (v1..) bases of V. Let A = M(I, (u1..), (v1..)). Then M(T, (u1..)) = A-1M(T, (v1..))A
+    ST = I => T injective & S surjective
+    Triangle Inequality (prove by squaring both sides and apply Cauchy), Pythagorean Theorem
+    Cauchy-Schwarz Inequality (|<u,v>| <= |u||v|, eq holds iff one is scalar multiple of the other) prove by orthogonal decomposition
+    parallelogram equality: |u+v|^2 + |u-v|^2 = 2(|u|^2 + |v|^2)
+    orthonormal list of vectors => linearly independent (prove by checking norm)
+    (e1...) orthonormal basis => v = <v,e1>e1 + ..., |v|^2 = |<v,e1>|^2 + ...
+    Gram-Schmidt: (v1,...) l.i. list of vectors => exists orthonormal (e1,...) s.t. span equal
+        ej = orthonormalize(vj - <vj,e1>e1 - ... - <vj, e{j-1}>e{j-1})
+    every orthonormal list of vectors can be extended to an orthonormal basis (first extend & then G-S)
+    T has u.t.m => T has u.t.m. w.r.t. some orthonormal basis
+    orthogonal projection: |v - P_U v| <= |v - u| for all u in U, eq holds iff u = P_U v
+Example of real linear operator with no real eigenvalue (R^4): T(z1,z2,z3,z4) = (z2,-z1,z4,-z3)
+Prove / disprove existence of inner product: try parallelogram equality
+
 = Chapter 6 =
 
 inner product
@@ -67,6 +188,7 @@ normal: T operator in L(V), TT^* = T^*T
     (T|U)^* = (T^*)|U
     T|U normal operator on U
     T|U^perp normal operator on U^perp
+  [T normal, V complex inner-product space] T self-adjoint <=> eigenvectors all real
 
 Spectral Theorem:
   [V complex / real], V has an orthonormal basis consisting of eigenvectors of T <=> T is normal / self-adjoint
@@ -99,6 +221,10 @@ singular value: eigenvalue of sqrt(T^*T)
 
 singular-value decomposition: suppose T in L(V) has singular values s1, ..., sn. Then there exist orthonormal bases (e1, ..., en) and (f1, ..., fn) of V such that Tv = s1<v, e1>f1 + ... + sn<v, en>fn for every v in V
 
+example of singular_value(T^2) != square(singular_value(T))
+  T = ((0,1),(2,0))    
+
+T1, T2 same singular values <=> exists isometries S1, S2 s.t. T1 = S1T2S2
 
 = Chapter 8 =
 generalized eigenvector: v generalized eigenvector if (T-lambda I)^j v = 0 for some positive integer j
@@ -129,6 +255,8 @@ Cayley-Hamilton Theorem: [V complex, T in L(V)]. q := characteristic polynomial 
   V = U_1 oplus ... oplus U_m <=>
     each U_j is invariant under T <=>
     each (T - lambda_j I)|U_j is nilpotent
+  remark: null T^n = generalized eigenspace of eigenval 0; range T^n rest.
+
 
 [V complex, T in L(V)] => exists basis of V consisting of generalized eigenvectors of T
 
@@ -138,7 +266,16 @@ Theorem: [V complex, T in L(V), lambda_1, ..., lambda_m distinct eigenvalues of 
 
 Jordan basis: if with respect to this basis T has a block diagonal matrix Diagonal(A_1, ..., A_m), where each A_j is an upper-triangular matrix with diagonal filled with some eigenvalue lambda_j of T, and the line directly above it filled with 1's, and all other 0's.
 
+m(v): the largest nonnegative integer such that N^(m(v)) v != 0
+
 Lemma: If N in L(V) is nilpotent, then there exists vectors v1, ..., vk s.t.
   (a) (v1, Nv1, ..., N^(m(v1))v1, ..., vk, Nvk, ..., N^(m(vk))vk) is a basis of V
   (b) (N^(m(v1))v1, ..., N^(m(vk))vk) is a basis of null N
+  proof technique: induction on dim. find basis for range(N) and null(N) cap range(N). choose basis for W where null(N) = (null(N) cap range(N)) oplus W
+
 Theorem: [V complex, T in L(V)]. exists a basis of V that is a Jordan basis for T
+
+ST nilpotent <=> TS nilpotent
+N nilpotent => only eigenvalue 0
+V complex, N only eigenvalue 0 => N nilpotent
+N self-adjoint & nilpotent => N = 0

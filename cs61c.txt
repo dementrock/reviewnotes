@@ -510,3 +510,116 @@ dependability via redundancy
       transmits n bits divisible by some number
       receiver divides frame by that number. no remainer => assume no error
       disks detect and correct blocks of 512 bytes with Reed Solomon codes
+  Redundant Arrays of Inexpensive Disks
+    files are striped across multiple disks
+    redundancy yields high data availability
+    contents reconstructed from data redundantly stored in the array
+      capacity penalty to store redundant info
+      bandwidth penalty to update redundant info
+    RAID 1: disk mirroring / shadowing
+      each disk is fully duplicated onto its mirror
+      logical write = 2 physical writes
+      100% capacity overhead
+    RAID 3: parity disk contains sum of other disks module 2
+      if disk fails, subtract P from sum of other disks to find missing information
+      good for large transfers. wider arrays reduce capacity costs, but decreases availability
+      33% capacity cost for parity if 3 data disks and 1 parity disk
+    RAID 4: use error detection field. allow independent reads to different disks
+    RAID 5: high i/o rate interleaved parity enables independent writes
+      1 logical write = 2 physical reads + 2 physical writes
+    RAID 6: add 2 check blocks per stripe of data to recover from 2 failures
+      each block of the diagonal parity disk contains the even parity of the blocks in the same diagonal
+
+memory management
+  heap: space requested for pointers via malloc(); resizes dynamically; grows upward
+  when free(), must pass original address returned from malloc(). otherwise system exception
+  common problems
+    using unitialized values
+    using memory you don't own
+      deallocated stack or heap value
+      out of bounds reference to stack or heap array
+      using NULL or garbage data as a pointer
+    improper use of free/malloc by messing with the pointer handle returned by malloc
+    memory leaks (allocated something forgot to later free)
+      
+(system) virtual machines: provide interface identical to underlying bare hardware
+  host operating system: OS actually running on the hardware
+    simulates environment for guest operating system together with virtualization layer
+  guest operating system: OS in simulated environment
+    cannot change access of real system resources
+    code runs in native machine ISA
+  virtual machine monitor / hypermonitor
+    maps virtual resources to physical resources: memory, i/o devices, processors
+    handles real i/o devides, emulates generic virtual i/o devices for guest OS
+    must intercept attempts by guest OS to access real i/o devices, allocate resources
+  divide computer
+    disks: divide space into chucks
+    virtual cores: multiple cores per chip. map virtual cores to physical cores
+    memory
+      solution 1: give all memory to any core that is running
+        save to disk when before another core runs
+        reload memory image for core when it runs
+        too slow - cores idle too long
+      solution 2: provide isolation protection for different variable length segments of memory
+        need special registers to check all addresses to make sure they stay within restricted segment
+        need mode in processor that says OK to change address limit registers or not OK
+          typically 2 modes to support VM
+        problem: results fragmentation of memory (enough memory but not contiguous)
+        solution: paging. divide memory into fixed, equal sized blocks called pages, typically 4KB or 8KB
+          have table that maps virtual address space to physical address space
+          host OS allocates pages to page table to control who accesses what
+          protection within program / guest OS
+            add protection bits to check on each memory access to catch bugs: read only / execute only
+          size: 1~2 MB; keep page tables in main memory; host OS must know where they are and protect them
+          demand paging scheme
+            on a page fault
+              input transfer into a free page is initiated
+              if no free page available, a page is selected to be replaced
+              replaced page is written on the disk (select first empty page on the disk to minimize latency)
+              page table is updated to point to the new location of the page on the disk
+          terminology
+            virtual address: program addresses
+            virtual memory: space of all virtual addresses
+            physical address: memory addresses
+            physical memory: space of all physical addresses
+          OS must reserve swap space on disk for each virtual machine
+          to grow a virtual machine, ask OS
+            if unused pages available, OS uses them first
+            if not, OS swaps some old pages to disk
+            Least Recently Used to pick pages to swap
+          address translation and protection
+            virtual page number / VPN | offset --address translation--> physical page number / PPN | offset
+            protection via page table
+              access rights: read (only), read/write, execute (only)
+                read
+              valid: invalid means it's on the disk, not in physical memory
+              VPN -> find page table entry = valid | Access Rights | Physical Page Address + offset -> physical memory address
+            page table address translation cache / translation lookaside buffer / TLB
+              TLB hit -> single cycle translation; miss -> access page-table to refill
+              usually fully associative
+              typically 32-128 entries
+              each entry maps a large page, so less spacial locality across pages
+              also page dirty bit, set when any data in page is written
+              when TLB entry replaced, corresponding page dirty bit is set in page table entry
+              comparison with data cache
+                valid bit: same. if valid = 0, must miss in btoh
+                dirty bit: different. for cache, means data block has been changed; for TLB, means page corresponding to this TLB entry has been changed
+            memory manage unit / MMU: hardware that walks the page tables and reloads the TLB
+
+            
+    instruction set support
+      user and system modes (some instruction only runs in system mode)
+      page table base register / PTBR: page table addr
+      privileged instructions only available in system mode (trap to system if executed in user mode)
+      all physical resources only accessible using privileged instructions (interrupt controls, i/o)
+    no impact on computation bound OS, big impact on i/o intensive 
+    host OS can also limit amount of time a VM uses a processor, at cost of swapping registers
+
+
+              
+
+          
+
+
+
+

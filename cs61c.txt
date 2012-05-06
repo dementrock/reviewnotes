@@ -1,10 +1,17 @@
 = before midterm =
 
+terabyte = 2^40
 CAPEX: capital expenditure
 OPEX: operating expense
 
 clock rate / clock frequency: #clock cycles per second
 5 components of a computer: control, datapath, memory, input, output
+
+datapath: performs arithmetic operations
+
+application binary interface / ABI: the combination of basic instruction set and operating system interface
+
+CPU time: time CPU spends, not including waiting for io or running other programs = user CPU time + system CPU time
 
 request level parallelism
 data level parallelism
@@ -163,7 +170,9 @@ different design considerations
 
 ALU: arithmetic logical unit
 
-CPU time = Instruction Count * Clocks Per Instruction with stall * Clocks Cycle
+CPU time = Instruction Count * Clocks Per Instruction with stall * Clocks Cycle = IC * CPI / clock rate
+
+Power = Capacitive load * Voltage^2 * Frequency switched
 
 maximum block size for matrix multiplication
   3 blocks of size r*r: 3r^2 = M
@@ -615,11 +624,11 @@ memory management
     no impact on computation bound OS, big impact on i/o intensive 
     host OS can also limit amount of time a VM uses a processor, at cost of swapping registers
 
-
-              
-
-          
-
-
-
-
+parallel instructions
+  load linked / ll
+  store conditional / sc
+    try: add $t0, $zero, $s4 ; copy exchange value
+    ll $t1, 0($s1) ; load linked
+    sc $t0, 0($s1) ; store conditional
+    beq $t0, $zero, try ; branch store fails
+    add $s4, $zero, $t1 ; put load value in $s4

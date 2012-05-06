@@ -1,0 +1,178 @@
+Definition:
+  vector space: a set V along with an addition and scalar multiplication on V such that commutativity, associativity, additive identity, additive inverse, multiplicative identity, distributive properties
+  P_m(F): VS of polynomial of degree at most m
+  subspace: additive identity, closed under addition, closed under scalar multiplication
+  direct sum: V is the direct sum of subspaces U_1, ..., U_m if each element of v can be written uniquely as a sum u_1 + ... + u_m
+  linearly independent (including empty list)
+  basis: a list of linearly independent vectors that spans V
+  linear map: additivity, homogeneity ( aT(v) = T(av))
+  operator: a linear map from a vector space to itself L(V)
+  invariant subspace under T: T(U) subset of U (condition that restriction is an operator)
+  eigenvalue: exists a *nonzero* vector s.t. ...
+  M(T, (v1, ..., vn)): default: standard basis
+  P_{U,W}(v) = u: v = u + w; V = U oplus W
+  inner product: positivity (v,v), definiteness (v,v), additivity in first slot, homogeneity in first slot, conjugate symmetry
+  Euclidean inner product on F^n: sum ui * bar(wi)
+  orthogonal complement: U^perp
+    [U subspace of V] V = U oplus U^perp
+    P_U is called the orthogonal projection of V onto U
+  unitary / orthogonal matrix: matrix over C / R s.t. columns form an orthonormal basis of R^n with the Euclidean inner product
+  adjoint: T in L(V, w), T^* maps from W to V s.t. <Tv, w> = <v, T^*w>.
+  self-adjoint: operator T in L(V) s.t. T = T^*
+  normal: T operator in L(V), TT^* = T^*T
+  positive operator: (V real && T self-adjoint || V complex) and <Tv, v> >= 0 for all v in V
+  isometry: norm(Tv) = norm(v) for all v in V
+  generalized eigenvector: v generalized eigenvector if (T-¦Ë I)^j v = 0 for some positive integer j
+  nilpotent: N^j = 0 for some j > 0
+  multiplicity: dim null(T-¦Ë*I)^dim
+  characteristic polynomial: p(z) = (z-¦Ë_1)^d1 * ... * (z-¦Ë_m)^dm [V complex, T in L(V), ¦Ë_1, ..., ¦Ë_m distinct eigenvalues of T, dj = multiplicity of ¦Ë_j].
+  Jordan basis: if with respect to this basis T has a block diagonal matrix Diagonal(A_1, ..., A_m), where each A_j is an upper-triangular matrix with diagonal filled with some eigenvalue ¦Ë_j of T, and the line directly above it filled with 1's, and all other 0's.
+  m(v): [N nilpotent] the largest nonnegative integer such that N^(m(v)) v != 0
+
+Proposition / Lemma:
+  V = U1 oplus U2 oplus ... oplus Um iff
+    V = U1 + ... + Um
+    and the only way to write 0 is by taking all ui 0
+  If (v1, ... ,vm) is linearly dependent in V and v1 != 0, then exists j in {2, ..., m} such that:
+    vj in Span(v1, ..., v_{j-1})
+    if the jth term is removed from (v1, ..., vm), the span of the remaining list still equals span(v1, ..., vm)
+  Suppose V is finite dimensional and U is a subspace of V. Then there is a subspace W of V such that V = U direct W.
+    Proof by extending a basis of U to a basis of V
+  Suppose U1, ..., Um subspaces s.t. V = U1 + ... + Um and dim V = dim U1 + ... + dim Um, then V = U1 oplus ... oplus Um
+  A linear map is invertible (exists S such that ST = TS = I) iff it is injective and surjective
+  Suppose that (v1, ... , vn) is a basis of V and (w1, ... ,wm) is a basis of W. Then M is an invertible linear map between L(V , W ) and Mat(m, n, F).
+    Proof by injectivity and surjectivity
+  dim L(V,W) = (dimV)(dimW)
+  ¦Ë root of p (deg m) iff exists q (deg m-1) s.t. p(z) = (z-¦Ë) * q(z)
+  root => complex conjugate also root
+  operator at most dim V eigenvalues
+  T in L(V), (v1, ..., vn) basis then
+    matrix upper triangular
+    <=> Tvk in Span(v1, ..., vk)
+    <=> span(v1, ..., vk) invariant under T
+  Suppose T in L(V) has an upper triangular matrix w.r.t some basis of V. T invertible <=> all entries on diagonal of u.t.m. nonzero.
+    proof technique:  prove contrapositive.
+      <=: if exists zero entry, Tvk in Span(v1, ..., vk-1). Construct linear map S: Span(v1,...,vk) -> Span(v1,...,vk-1) by Sv=Tv. not injective => exists v Tv = 0 => T not invertible
+      =>: if not invertible, exists v, Tv = 0 => T(a1v1+...+akvk) = 0, ak!=0 => Tvk in Span(v1,...,vk-1) => ¦Ë_k must be 0
+  M(ST, (u1,...), (w1...)) = M(S, (v1...), (w1...))M(T, (u1...), (v1...))
+  Q unitary / orthogonal <=> T(x) = Qx isometry <=> QQ* = I <=> Q* unitary / orthogonal <=> rows of Q form an orthonormal basis
+  adjoint
+    (aT)* = conjugate(a)T^*
+    null T^* = (range T)^perp
+    range T^* = (null T)^perp
+    [both orthonormal basis] A^* is conjugate transpose of A
+    T injective <=> T* surjective
+  self-adjoint
+    every eigenvalue real
+    [V complex, <Tv, v> = 0 for all v in V] => T = 0
+      proof technique: <Tu, w> = (<T(u+w), u+w> - <T(u-w), u-w>) / 4 + i(<T(i((u+w)), i(u+w)> - <T(i((u-w)), i(u-w)>) / 4
+    [V real, T self-adjoint, <Tv, v> = 0 for all v in V] => T = 0
+      proof technique: <Tu, w> = (<T(u+w), u+w> - <T(u-w), u-w>) / 4
+    [V complex] T self-adjoint <=> <Tv, v> in R for all v in V
+      proof technique: <Tv, v> - conjugate(<Tv, v>) = <(T - T^*)v, v>
+  <u, v> = 0 iff norm(u) <= norm(u+av) for all a in F
+  [P in L(V), P^2 = P]
+    P orthogonal projection <=> P self-adjoint
+    norm(Pv) <= norm(v) for every v in V => P orthogonal projection
+    every vector in null P orthogonal to every vector in range P => P orthogonal projection
+  normal
+    T normal <=> norm(Tv) = norm(T^*v) for all v in V
+    T normal => [v in V eigenvector of T with eigenvalue ¦Ë <=> eigenvector of T^* with eigenvalue conjugate(¦Ë)]
+    T normal => eigenvectors of T corresponding to distinct eigenvalues are orthogonal
+    [T normal, U invariant subspace] =>
+      U^perp invariant under T
+      U invariant under T^*
+      (T|U)^* = (T^*)|U
+      T|U normal operator on U
+      T|U^perp normal operator on U^perp
+    [T normal, V complex inner-product space] T self-adjoint <=> eigenvectors all real
+  [F = R && T self-adjoint || F = C && T normal], ¦Ë_1 .. ¦Ë_n distinct eigenvalues of T => V = null(T-¦Ë_1 I) oplus ... oplus null(T-¦Ë_n I). Furthermore, each vector in each null(T-¦Ë_j I) is orthogonal to all vectors in the other subspaces of this decomposition
+  T is positive <=>
+    T is self-adjoint and all the eigenvalues of T are nonnegative <=>
+    T has a positive square root <=>
+    T has a self-adjoint square root <=>
+    exists S in L(V) s.t. T = S*S
+  T positive => has unique positive square root
+  S is an isometry <=> <Su, Sv> = <u, v> for all u, v in V <=> S*S = I <=> (Se1, ..., Sen) is orthonormal whenever (e1, ..., en) orthonormal in V <=> exists (e1, ..., en) s.t. (Se1, ..., Sen) orthonormal <=> S* isometry
+  isometry => normal
+  [V complex, S in L(V)]. S isometry <=> exists orthonormal basis of V consisting of eigenvectors of S all of whose corresponding eigenvalues have absolute value 1
+  singular value: eigenvalue of sqrt(T^*T)
+  T1, T2 same singular values <=> exists isometries S1, S2 s.t. T1 = S1T2S2
+  N in L(V) nilpotent => N^(dim V) = 0
+  [T in L(V), ¦Ë in F]. foreach basis s.t. T has upper-tri matrix, ¦Ë appears on diagonal dim(null((T - ¦Ë I)^(dim V))) times.
+    proof technique: WLOG only consider ¦Ë = 0. induction on dimension. break down into cases ¦Ë_n != 0, ¦Ë_n = 0
+  V complex vector space. sum of multiplicities of all the eigenvalues of T equals V
+  [N nilpotent operator on V] => exists basis of V with respect to which the matrix of N has all entries on and below diagonal 0's.
+  If N in L(V) is nilpotent, then there exists vectors v1, ..., vk s.t.
+    (a) (v1, Nv1, ..., N^(m(v1))v1, ..., vk, Nvk, ..., N^(m(vk))vk) is a basis of V
+    (b) (N^(m(v1))v1, ..., N^(m(vk))vk) is a basis of null N
+    proof technique: induction on dim. find basis for range(N) and null(N) cap range(N). choose basis for W where null(N) = (null(N) cap range(N)) oplus W
+  ST nilpotent <=> TS nilpotent
+  N nilpotent => only eigenvalue 0
+  V complex, N only eigenvalue 0 => N nilpotent
+  N self-adjoint & nilpotent => N = 0
+  det(-A) = (-1)^n det(A), A=M_{n*n}
+
+Theorem:
+  In a finite-dimensional vector space, the length of every linearly independent list of vectors is less than or equal to the length of every spanning list of vectors.
+    Proof by adjoining vi to wi
+  Every spanning list in a vector space can be reduced to a basis of the vector space.
+    Proof by discarding vectors not in the span of previous vectors
+  Every linearly independent list of vectors in a finite-dimensional vector space can be extended to a basis of the vector space.
+  If U1 U2 subspaces, then dim(U1+U2) = dim U1 + dim U2 - dim(U1 intersect U2)
+  V finite and T linear map form V to W, then dim V = dim null T + dim range T
+  Suppose V is finite dimensional. If T in  L(V), then the following are equivalent:
+    (a) T is invertible; (b) T is injective; (c) T is surjective.
+  Foundamental Theorem of Algebra: every nonconstant polynomial with complex coefficients has a root
+  p real polynomial nonconstant => unique factorization into deg <= 2 polynomials
+  l1, ..., lm distinct eigenvalues, v1, ..., vm nonzero eigenvectors => linearly independent
+    proof technique: contradiction. pick the first vk in span(v1,...,vk-1)
+  Every operator on a finite dimensional, nonzero, complex vector space has an eigenvalue
+    proof technique: pick nonzero v, construct (v, Tv, ..., T^n(v)). must be linearly dependent
+      factor the operator polynomial (at least one factor not injective) and get a root => eigenvalue
+  V complex vector space, T in L(V), then T has an upper triangular matrix w.r.t some basis of V
+    proof technique: use induction. partition V by U = range(T - ¦Ë I), ¦Ë eigenvalue. U invariant.
+      dim U < dim V. extend basis of U to V. proof property of upper triangular matrix
+  Every operator on a finite-dimensional, nonzero, real vector space has an invariant subspace of dimension 1 or 2
+    proof technique: if quadratic, consider Span(u, Tu)
+  Every operator on an odd-dimensional real vector space has an eigenvalue 
+    proof technique: induction on dimension. T = U oplus W, if U dim 2 , W not an invariant subspace
+      define Sw = P_{W,U} T(w). S has eigenvalue ¦Ë. goal: find eigenvector in U+span(w)
+      consider u + aw (l eigenvalue of U): (T-lI)(u+aw) = Tu-lu + a(Tw-lw) = Tu-lu + a(P_{U,W}T(w)+P_{W,U}T(w)-lw) = Tu-lu + aP_{U,W}(Tw) in U. So maps U+span(w) to U. not injective
+  Suppose T in L(V). (u1..), (v1..) bases of V. Let A = M(I, (u1..), (v1..)). Then M(T, (u1..)) = A-1M(T, (v1..))A
+  ST = I => T injective & S surjective
+  Triangle Inequality (prove by squaring both sides and apply Cauchy), Pythagorean Theorem
+  Cauchy-Schwarz Inequality (|<u,v>| <= |u||v|, eq holds iff one is scalar multiple of the other) prove by orthogonal decomposition
+  parallelogram equality: |u+v|^2 + |u-v|^2 = 2(|u|^2 + |v|^2)
+  orthonormal list of vectors => linearly independent (prove by checking norm)
+  (e1...) orthonormal basis => v = <v,e1>e1 + ..., |v|^2 = |<v,e1>|^2 + ...
+  Gram-Schmidt: (v1,...) l.i. list of vectors => exists orthonormal (e1,...) s.t. span equal
+    ej = orthonormalize(vj - <vj,e1>e1 - ... - <vj, e{j-1}>e{j-1})
+  every orthonormal list of vectors can be extended to an orthonormal basis (first extend & then G-S)
+  T has u.t.m => T has u.t.m. w.r.t. some orthonormal basis
+  orthogonal projection: |v - P_U v| <= |v - u| for all u in U, eq holds iff u = P_U v
+  Spectral Theorem: [V complex / real], V has an orthonormal basis consisting of eigenvectors of T <=> T is normal / self-adjoint
+    proof technique:
+      if V complex, exists orthonormal basis s.t. M(T) upper triangular, argue actually diagonal
+      if V real, prove by induction on dimension of V, pick any eigenvector with norm 1, argue T|_({v}^perp) self-adjoint
+        Lemma: [T in L(V) self-adjoint], a, b in R s.t. a^2 < 4b => T^2 + aT + bI invertible
+        Lemma: [T in L(V) self-adjoint] => T has an eigenvalue
+  Polar Decomposition: [T in L(V)]. exists isometry S in L(V) s.t. T = S*sqrt(T^*T)
+    proof technique: observe that norm(Tv) = norm(sqrt(T^*T)v) for all v. define S1: range(sqrt(T^*T)) -> range(T), S2: range(sqrt(T^*T))^perp -> range(T)^perp. define S: Sv = S1u + S2w where v = u + w
+  Singular-Value Decomposition: suppose T in L(V) has singular values s1, ..., sn. Then there exist orthonormal bases (e1, ..., en) and (f1, ..., fn) of V such that Tv = s1<v, e1>f1 + ... + sn<v, en>fn for every v in V
+  Cayley-Hamilton Theorem: [V complex, T in L(V)]. q := characteristic polynomial of T. => q(T) = 0
+    prove by induction on j: (T-l1I)...(T-ljI)vj = 0. Note that (T-ljI)vj in span(v1,...,vj-1)
+  [V complex, T in L(V), ¦Ë_1, ..., ¦Ë_m distinct eigenvalues of T, U_1...U_m corresponding subspaces of generalized eigenvectors]
+    V = U_1 oplus ... oplus U_m <=>
+      each U_j is invariant under T <=>
+      each (T - ¦Ë_j I)|U_j is nilpotent
+    remark: null T^n = generalized eigenspace of eigenval 0; range T^n rest.
+  [V complex, T in L(V)] => exists basis of V consisting of generalized eigenvectors of T
+  [V complex, T in L(V), ¦Ë_1, ..., ¦Ë_m distinct eigenvalues of T] => exists basis of V w.r.t which T has a block diagonal matrix of the form Diagonal(A1, ..., Am) where each A_j is an upper triangular matrix, with ¦Ë_j along the diagonal.
+  [V complex, T in L(V)]. exists a basis of V that is a Jordan basis for T
+
+Problem tips:
+  Consider the special case of zero space.
+  Example of real linear operator with no real eigenvalue (R^4): T(z1,z2,z3,z4) = (z2,-z1,z4,-z3)
+  Prove / disprove existence of inner product: try parallelogram equality
+  Example of singular_value(T^2) != square(singular_value(T)): T = ((0,1),(2,0))    

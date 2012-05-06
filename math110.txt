@@ -65,7 +65,7 @@ Prop:
     dim L(V,W) = (dimV)(dimW)
     Suppose V is finite dimensional. If T in  L(V), then the following are equivalent:
         (a) T is invertible; (b) T is injective; (c) T is surjective.
-    lambda root of p (deg m) iff exists q (deg m-1) s.t. p(z) = (z-lambda) * q(z)
+    λ root of p (deg m) iff exists q (deg m-1) s.t. p(z) = (z-λ) * q(z)
     p polynomial deg m => at most m roots
     Foundamental Theorem of Algebra: every nonconstant polynomial with complex coefficients has a root
     root => complex conjugate also root
@@ -81,12 +81,12 @@ Prop:
           <=> Tvk in Span(v1, ..., vk)
           <=> span(v1, ..., vk) invariant under T
     V complex vector space, T in L(V), then T has an upper triangular matrix w.r.t some basis of V
-        proof technique: use induction. partition V by U = range(T - lambda I), lambda eigenvalue. U invariant.
+        proof technique: use induction. partition V by U = range(T - λ I), λ eigenvalue. U invariant.
             dim U < dim V. extend basis of U to V. proof property of upper triangular matrix
     Suppose T in L(V) has an upper triangular matrix w.r.t some basis of V. T invertible <=> all entries on diagonal of u.t.m. nonzero.
         proof technique:  prove contrapositive.
             <=: if exists zero entry, Tvk in Span(v1, ..., vk-1). Construct linear map S: Span(v1,...,vk) -> Span(v1,...,vk-1) by Sv=Tv. not injective => exists v Tv = 0 => T not invertible
-            =>: if not invertible, exists v, Tv = 0 => T(a1v1+...+akvk) = 0, ak!=0 => Tvk in Span(v1,...,vk-1) => lambda_k must be 0
+            =>: if not invertible, exists v, Tv = 0 => T(a1v1+...+akvk) = 0, ak!=0 => Tvk in Span(v1,...,vk-1) => λ_k must be 0
     corollary: T in L(V) has u.t.m. Then eigenvalues precisely diagonal entries
     distinct eigenvalues & # = dim V => exists diagonal matrix
     T in L(V), l1, ..., lm distinct eigenvalues.
@@ -98,10 +98,9 @@ Prop:
         prove last to second: group basis of each subspace, sum of them an eigenvector. However eigenvector with different eigenvalues l.i.
     Every operator on a finite-dimensional, nonzero, real vector space has an invariant subspace of dimension 1 or 2
         proof technique: if quadratic, consider Span(u, Tu)
-        proof technique: if quadratic, consider Span(u, Tu)
     Every operator on an odd-dimensional real vector space has an eigenvalue 
         proof technique: induction on dimension. T = U oplus W, if U dim 2 , W not an invariant subspace
-            define Sw = P_{W,U} T(w). S has eigenvalue lambda. goal: find eigenvector in U+span(w)
+            define Sw = P_{W,U} T(w). S has eigenvalue λ. goal: find eigenvector in U+span(w)
             consider u + aw (l eigenvalue of U): (T-lI)(u+aw) = Tu-lu + a(Tw-lw) = Tu-lu + a(P_{U,W}T(w)+P_{W,U}T(w)-lw) = Tu-lu + aP_{U,W}(Tw) in U. So maps U+span(w) to U. not injective
     M(ST, (u1,...), (w1...)) = M(S, (v1...), (w1...))M(T, (u1...), (v1...))
     Theorem: Suppose T in L(V). (u1..), (v1..) bases of V. Let A = M(I, (u1..), (v1..)). Then M(T, (u1..)) = A-1M(T, (v1..))A
@@ -180,7 +179,7 @@ self-adjoint: operator T in L(V) s.t. T = T^*
 
 normal: T operator in L(V), TT^* = T^*T
   T normal <=> norm(Tv) = norm(T^*v) for all v in V
-  T normal => [v in V eigenvector of T with eigenvalue lambda <=> eigenvector of T^* with eigenvalue conjugate(lambda)]
+  T normal => [v in V eigenvector of T with eigenvalue λ <=> eigenvector of T^* with eigenvalue conjugate(λ)]
   T normal => eigenvectors of T corresponding to distinct eigenvalues are orthogonal
   [T normal, U invariant subspace] =>
     U^perp invariant under T
@@ -198,7 +197,7 @@ Spectral Theorem:
         Lemma: [T in L(V) self-adjoint], a, b in R s.t. a^2 < 4b => T^2 + aT + bI invertible
         Lemma: [T in L(V) self-adjoint] => T has an eigenvalue
   Corollary:
-    [F = R && T self-adjoint || F = C && T normal], lambda_1 .. lambda_n distinct eigenvalues of T => V = null(T-lambda_1 I) directsum ... directsum null(T-lambda_n I). Furthermore, each vector in each null(T-lambda_j I) is orthogonal to all vectors in the other subspaces of this decomposition
+    [F = R && T self-adjoint || F = C && T normal], λ_1 .. λ_n distinct eigenvalues of T => V = null(T-λ_1 I) directsum ... directsum null(T-λ_n I). Furthermore, each vector in each null(T-λ_j I) is orthogonal to all vectors in the other subspaces of this decomposition
 
 positive operator: (V real && T self-adjoint || V complex) and <Tv, v> >= 0 for all v in V
   T is positive <=>
@@ -227,34 +226,35 @@ example of singular_value(T^2) != square(singular_value(T))
 T1, T2 same singular values <=> exists isometries S1, S2 s.t. T1 = S1T2S2
 
 = Chapter 8 =
-generalized eigenvector: v generalized eigenvector if (T-lambda I)^j v = 0 for some positive integer j
+generalized eigenvector: v generalized eigenvector if (T-λ I)^j v = 0 for some positive integer j
 
 //if T in L(V) and m is a nonnegative integer s.t. null T^m = null T^(m+1), then null T^0 subset null T^1 subset ... subset null T^m = null T^(m+1) = null T^(m+2) = ...
 
 //[T in L(V)] null T^(dimV) = null T^(dimV + 1) = ...
-//[T in L(V), lambda eigenvalue of T]. {v | (T-lambda I)^j v = 0 for some j > 0} = null(T-lambda I)^(dim V)
+//[T in L(V), λ eigenvalue of T]. {v | (T-λ I)^j v = 0 for some j > 0} = null(T-λ I)^(dim V)
 
 nilpotent: N^j = 0 for some j > 0
   N in L(V) nilpotent => N^(dim V) = 0
 
-[T in L(V), lambda in F]. foreach basis s.t. T has upper-tri matrix, lambda appears on diagonal dim(null((T - lambda I)^(dim V))) times.
-  proof technique: WLOG only consider lambda = 0. induction on dimension. break down into cases lambda_n != 0, lambda_n = 0
+[T in L(V), λ in F]. foreach basis s.t. T has upper-tri matrix, λ appears on diagonal dim(null((T - λ I)^(dim V))) times.
+  proof technique: WLOG only consider λ = 0. induction on dimension. break down into cases λ_n != 0, λ_n = 0
 
-multiplicity: = dim null(T-lambda*I)^dimV
+multiplicity: = dim null(T-λ*I)^dimV
 
 V complex vector space. sum of multiplicities of all the eigenvalues of T equals V
 
-characteristic polynomial: p(z) = (z-lambda_1)^d1 * ... * (z-lambda_m)^dm [V complex, T in L(V), lambda_1, ..., lambda_m distinct eigenvalues of T, dj = multiplicity of lambda_j].
+characteristic polynomial: p(z) = (z-λ_1)^d1 * ... * (z-λ_m)^dm [V complex, T in L(V), λ_1, ..., λ_m distinct eigenvalues of T, dj = multiplicity of λ_j].
+  also applies to diagonal block matrix
 
 Cayley-Hamilton Theorem: [V complex, T in L(V)]. q := characteristic polynomial of T. => q(T) = 0
   prove by induction on j: (T-l1I)...(T-ljI)vj = 0. Note that (T-ljI)vj in span(v1,...,vj-1)
 
 [T in L(V). p in P(F)]. => null p(T) invariant under T
 
-[V complex, T in L(V), lambda_1, ..., lambda_m distinct eigenvalues of T, U_1...U_m corresponding subspaces of generalized eigenvectors]
+[V complex, T in L(V), λ_1, ..., λ_m distinct eigenvalues of T, U_1...U_m corresponding subspaces of generalized eigenvectors]
   V = U_1 oplus ... oplus U_m <=>
     each U_j is invariant under T <=>
-    each (T - lambda_j I)|U_j is nilpotent
+    each (T - λ_j I)|U_j is nilpotent
   remark: null T^n = generalized eigenspace of eigenval 0; range T^n rest.
 
 
@@ -262,9 +262,9 @@ Cayley-Hamilton Theorem: [V complex, T in L(V)]. q := characteristic polynomial 
 
 Lemma: [N nilpotent operator on V] => exists basis of V with respect to which the matrix of N has all entries on and below diagonal 0's.
 
-Theorem: [V complex, T in L(V), lambda_1, ..., lambda_m distinct eigenvalues of T] => exists basis of V w.r.t which T has a block diagonal matrix of the form Diagonal(A1, ..., Am) where each A_j is an upper triangular matrix, with lambda_j along the diagonal.
+Theorem: [V complex, T in L(V), λ_1, ..., λ_m distinct eigenvalues of T] => exists basis of V w.r.t which T has a block diagonal matrix of the form Diagonal(A1, ..., Am) where each A_j is an upper triangular matrix, with λ_j along the diagonal.
 
-Jordan basis: if with respect to this basis T has a block diagonal matrix Diagonal(A_1, ..., A_m), where each A_j is an upper-triangular matrix with diagonal filled with some eigenvalue lambda_j of T, and the line directly above it filled with 1's, and all other 0's.
+Jordan basis: if with respect to this basis T has a block diagonal matrix Diagonal(A_1, ..., A_m), where each A_j is an upper-triangular matrix with diagonal filled with some eigenvalue λ_j of T, and the line directly above it filled with 1's, and all other 0's.
 
 m(v): the largest nonnegative integer such that N^(m(v)) v != 0
 
@@ -279,3 +279,5 @@ ST nilpotent <=> TS nilpotent
 N nilpotent => only eigenvalue 0
 V complex, N only eigenvalue 0 => N nilpotent
 N self-adjoint & nilpotent => N = 0
+
+det(-A) = (-1)^n det(A), A=M_{n*n}

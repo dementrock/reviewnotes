@@ -98,24 +98,11 @@ N-way associative: N places for a block
 direct mapped cache (N = 1): each memory location is mapped directly to exactly one location in the cache.
   mapping: (block address) mod (number of blocks) (index bits)
   block address = floor(byte address / bytes per block)
-  add a set of tags (only upper portion of the address)
-  valid bit: 1 => match; 0 => nonsense values
-  
-  valid bit + tag + data
-
-  32-byte address, cache size 2^n blocks => index field, block size 2^m words (2^(m+2)) bytes => block offset
-  size of tag field: 32 - (n + m + 2)
-
-  don't need to store index / block offset in cache
-
-  total number of bits in cache: 2^n * (block size + tag size + valid bit size)
-  block 2^m words = 2^(m+5) bits
-
-  2^n * (2^m * 32 + (32 - n - m - 2) + 1)
-
-  usually only count size of data (block)
-
-  ** block index field: select word from a block
+  size of index = log (number of blocks)
+  size of offset = log(block size in bytes)
+  size of tag = 32 - size of index - size of offset 
+  cache entry = valid bit + tag + data 
+  total number of bits in cache: 2^(number of blocks) * (block size + tag size + valid bit size)
 
 increase the block size may:
   decrease miss rate
@@ -137,7 +124,7 @@ write
     when a write occurs, the new value is written only to the block in the cache. The modified block is written to the lower level of the hierarchy when it is replaced.
     include a "dirty" bit to see if wrote to block or not
 
-AMAT = average memory access time = time for a hit + miss 
+AMAT = average memory access time = time for a hit + miss rate * miss penalty
 
 CPI with stalls = CPI ideal + instruction miss rate * miss penalty + %load and stores * data miss rate * miss penalty
                 = CPI ideal + read-stall cycles + write-stall cycles
@@ -331,7 +318,7 @@ hardware
         simple solution: stall on every branch until new PC value (2 stalls per branch)
         optimization #1: insert special branch comparator in stage 2, set new PC as soon as instruction decoded (1 stalls per branch)
         optimization #2: predict outcome (simplest to predict NOT taken)
-        optimization #3: branch-delay slot (always execute instruction after branch. used by MIPS)
+        optimization #3: branch delay slot (always execute instruction after branch. used by MIPS)
           put no-op in the branch slot or place some instruction preceding the branch in the slot
         dynamic branch prediction
           branch prediction buffer / branch history table
@@ -632,3 +619,10 @@ parallel instructions
     sc $t0, 0($s1) ; store conditional
     beq $t0, $zero, try ; branch store fails
     add $s4, $zero, $t1 ; put load value in $s4
+
+data hazard: read/write in same cycle can be resolved assuming write in first half and read in second half.
+
+virtual memory
+  valid bit in page table: indicate whether page is present in main memory or hard disk
+  page table is not a cache
+  must use write back

@@ -1,6 +1,6 @@
-= before midterm 1 =
+= midterm 1 =
 
-conjunction: P and Q; disjunction: P or Q; negation: not P; truth table
+conjunction: P and Q; disjunction: P or Q; negation: not P
 implication: P => Q logically equivalent to (not P) or Q; contrapositive: not Q => not P; converse: Q => P;
 
 Direct proof, proof by contraposition, proof by contradiction, proof by cases, induction, strong induction, well ordering principle, 
@@ -42,66 +42,36 @@ def extended-gcd (x, y):
     (d, a, b) = extended-gcd (y, x mod y)
     return (d, b, (a - int(x / y) * b))
 
-= before midterm 2 =
-
-Graphs are allowed to have self-loops, but assume they don't.
-
-path: a sequence of neighboring edges. A path between v1 and vn: (v1, v2), (v2, v3), ..., (vn-1, vn)
-
-simple path: no repeated vertices.
-
-cycle: a path that begins and ends at the same vertex.
-
-connected graph: exists path between any two distinct vertices.
-
-degree: (undirected graph) degree(v) = |{u in V: (v, u) in E}|. (directed graph) in-degree, out-degree
-
-isolated vertex: deg = 0
-
-multigraph: multiple edges between the same pair of vertices
-
-Eulerian path / Eulerian walks: a path in a graph that uses each edge exactly once (not simple)
-
-Eulerian tour / Eulerian cycle: an Eulerian path whose starting point is the same as its ending point
+= midterm 2 =
 
 Euler's Theorem: An undirected graph G = (V, E ) has an Eulerian tour if and only if the graph is connected (except possibly for isolated vertices) and every vertex has even degree. (for directed graph: for every vertex v, in-degree = out-degree)
-    Proof technique: start from any vertex u, go until stuck (must stuck at u by lemma: walk u->v, only u and v can have odd degree). Find an edge not covered with one vertex on the current walk, splice in.
 
 de Bruijn sequence: a 2^n-bit circular sequence such that every string of length n occurs as a contiguous substring of the sequence exactly once.
-
 de Bruijn graph: V = {0, 1}^(n-1), E = for each a1a2...an-1, (a1a2...an-1, a2a3...a{n-1}0), (a1a2...an-1, a2a3...a{n-1}1), (0a1a2...an-2, a1a2...a{n-1}), (1a1a2...an-2, a1a2...a{n-1})
 
 n-dimensional hypercube graph: undirected, V = {0,1}^n, E = (x,y) iff x,y differ in one place. 2nd def: n-dim = 2 * (n-1)-dim + edges between corresponding vertices, i.e. x in 0-cube and x in 1-cube
     |E| = n2^(n-1)
     Let E_{S, V-S} denote the set of edges connecting vertices in S to vertices in V-S. Then |E_{S, V-S}| >= min(|S|, |V-S|) (prove by induction on n, consider S0, S1 both <= 2^(n-1)/2; or S0 > 2^(n-1)/2)
-    has a Hamiltonian cycle => Gray code
-        proof: induction on n. Select 0v adjacent to 0^n. 0^n --(hamiltonian path)-> 0v -> 1v --(h path)-> 1^n -> 0^n
 
-Hamiltonian path / cycle: a path / cycle that goes through every vertex exactly once.
+place k balls into n bins with replacement, order does not matter: Represent each of the balls by a 0 and the separations between boxes by 1’ => k * 0 + (n-1) * 1 => n+k-1 choose k
 
-first rule of counting: object made by succession of k choices. n1 ways of 1th choice, ..., nk ways of kth choices => n1 * n2 * .. * nk
+//n choose k+1 = (n-1 choose k) + (n-2 choose k) + ... + (k choose k)
 
-first rule of counting: object made by succession of k choices. order doesn't matter. First count as order matters, then divide #ordered per unordererd.
+//probability space is a sample space Omega, together with a probability Pr[w] for each sample point w, such that 0 <= Pr[w] <= 1 for all w in Omega, and sum Pr = 1. outcome - sample point
 
-place k balls into n bins: Represent each of the balls by a 0 and the separations between boxes by 1’ => k * 0 + (n-1) * 1 => n+k-1 choose k
+//event: subset of sample space. Pr[A] = sum_{w in A} Pr[w]
 
-n choose k+1 = (n-1 choose k) + (n-2 choose k) + ... + (k choose k)
+//Monty Hall: (i, j, k). i: location of prize; j: initial door chosen by the contestant; j: door opened
 
-probability space is a sample space Omega, together with a probability Pr[w] for each sample point w, such that 0 <= Pr[w] <= 1 for all w in Omega, and sum Pr = 1. outcome - sample point
+//Independence: A independent B if Pr[A cap B] = Pr[A] * Pr[B]. A1, ..., An mutually independent if for every subset I in {1, ..., n}, Pr[Cap{i in I} Ai] = Mult{i in I} Pr[Ai]. Pairwise independence (every pair independent)
 
-event: subset of sample space. Pr[A] = sum_{w in A} Pr[w]
+//Bayes' Rule: Pr[A|B] = Pr[B|A]Pr[A] / Pr[B]
 
-Monty Hall: (i, j, k). i: location of prize; j: initial door chosen by the contestant; j: door opened
+//Total Probability Rule: Pr[B] = Pr[B|A]Pr[A] + Pr[B|not A] (1 - Pr[A])
 
-Independence: A independent B if Pr[A cap B] = Pr[A] * Pr[B]. A1, ..., An mutually independent if for every subset I in {1, ..., n}, Pr[Cap{i in I} Ai] = Mult{i in I} Pr[Ai]. Pairwise independence (every pair independent)
+//Product Rule: Pr[Cap{i=1 to n} Ai] = Pr[A1] * Pr[A2|A1] * Pr[A3|A1 cap A2] * ... * Pr[An|Cap{i=1 to n-1} Ai]
 
-Bayes' Rule: Pr[A|B] = Pr[B|A]Pr[A] / Pr[B]
-
-Total Probability Rule: Pr[B] = Pr[B|A]Pr[A] + Pr[B|not A] (1 - Pr[A])
-
-Product Rule: Pr[Cap{i=1 to n} Ai] = Pr[A1] * Pr[A2|A1] * Pr[A3|A1 cap A2] * ... * Pr[An|Cap{i=1 to n-1} Ai]
-
-Principle of Inclusion/Exclusion: Pr[union] = ....
+//Principle of Inclusion/Exclusion: Pr[union] = ....
 
 Union bound: Pr[union] <= sum of Pr
 
@@ -114,27 +84,26 @@ a random variable X on a sample space Omega is a function that assigns to each s
 Pr[X=a] = Pr[{w in Omega: X(w) = a}]
 
 distribution: collection of values {(a, Pr[X=a]): a in A}, where A is the set of all possible values taken by X
-    the collection of events form a partition of the sample space
+    //the collection of events form a partition of the sample space
 
 binomial distribution: Pr[X=i] = (n choose i)p^i(1-p)^(n-i). X ~ Bin(n, p). E[X] = np
 
 error correction: encode n packets into n+k packets s.t. the recipient can reconstruct the original n packets from any n packets received. packets lost with prob p. X (packets received) ~ Bin(n+k, 1-p)
 
-expectation / mean / average of r.v.: definition: E(X) = sum_{a in A} a * Pr[X=a]
-    rewritten: E(X) = sum_{w in Omega} X(w) * Pr(w)
+E(X) = (definition) sum_{a in A} a * Pr[X=a] = sum_{w in Omega} X(w) * Pr(w)
 
-linearity of expectation: for any two random variables X, Y on the same probability space, for any constant c, E(X+Y) = E(X) + E(Y); E(cX) = cE(X)
+//linearity of expectation: for any two random variables X, Y on the same probability space, for any constant c, E(X+Y) = E(X) + E(Y); E(cX) = cE(X)
 
-indicator random variable: 0/1-valued random variable. E(Xi) = 0 * Pr[Xi=0] + 1 * Pr[Xi=1] = Pr[Xi=1]
+//indicator random variable: 0/1-valued random variable. E(Xi) = 0 * Pr[Xi=0] + 1 * Pr[Xi=1] = Pr[Xi=1]
 
 expected number of fixed points in a random permutation of n items is always 1
 
 throw m balls into n bins. Y = number of empty bins. E[Y] = n(1-1/n)^m
 
-geometric distribution: X ~ Geom(p). Pr[X=i] = (1-p)^(i-1)p. E[X] = 1/p
+geometric distribution: X ~ Geom(p). Pr[X=i] = (1-p)^(i-1)p. E[X] = 1/p. Pr[X>=i] = (1-p)^(i-1)
     biased coin, Pr[head] = p. tossed repeatedly until first head.
 
-Theorem: Let X be a random variable that takes on only non-negative integer values. Then E[X] = sum_{i=1}^infinity Pr[X>=i]. Pr[X>=i] = (1-p)^(i-1)
+Theorem: Let X be a random variable that takes on only non-negative integer values. Then E[X] = sum_{i=1}^infinity Pr[X>=i].
 
 collect set of n different cards. X = boxes need to buy to collect at least one copy of each card. Xi = #boxes buy while trying to get the ith new card. 
     E(Xi) = n / (n - i + 1) => E(X) = n sum_{i=1}^n 1/i ~ n (ln n + lambda)
@@ -143,7 +112,7 @@ collect set of n different cards. X = boxes need to buy to collect at least one 
 Poisson distribution: Pr[X=i] = lambda^i/i! * e^(-lambda), Poisson distribution with parameter lambda. X ~ Poiss(lambda). E[X] = lambda
     limit of the numbers of balls in bin 1 when n balls are thrown into n/lambda bins
 
-= before final =
+= final =
 
 E(X^2) = E((X1+...+Xn)^2) = sum_i E(Xi^2) + sum_{i!=j} E(XiXj)
 variance: Var(X) = E((X - E(X)))^2 (definition) = E(X^2) - (E(X))^2
@@ -228,7 +197,7 @@ Normal distribution: X ~ N(miu, sigma^2). f(x) = 1/sqrt(2*pi*sigma^2) * e^(-(x-m
   when miu=0 and sigma=1, standard normal distribution
   in general, Y = (X-miu) / sigma has the standard normal distribution
 
-Central Limit Theorem: Let X1,...,Xn be i.i.d.r.v. with common expectation miu=E(Xi) and variance sigma^2=Var(Xi) (both assumed to be <oo). Define A'n = (sum_i Xi-n*miu) / (sigma*sqrt(n)). Then as n->oo, the distribution of A'n approaches the standard normal distribution in the sense that, for any real alpha,
+Central Limit Theorem: Let X1,...,Xn be i.i.d.r.v. with common expectation miu=E(Xi) and variance sigma^2=Var(Xi) (both assumed to be <oo). Define A'n = (An-miu)/(sigma/sqrt(n)) = ((sum_i Xi)-n*miu) / (sigma*sqrt(n)). Then as n->oo, the distribution of A'n approaches the standard normal distribution in the sense that, for any real alpha,
   Pr[A'n<=alpha] -> 1/sqrt(2pi) int_-oo^alpha e^(-x^2/2) dx as n->oo
 
 bijection from N to Z: f(x) = x/2 if x is even else -(x+1)/2
